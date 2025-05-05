@@ -8,6 +8,153 @@
   <link rel="stylesheet" href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css">
   <!-- 引入应用自定义样式 -->
   <link rel="stylesheet" href="./src/css/style.css">
+  <!-- 优先样式，确保品牌和公众号区域正确显示 -->
+  <style>
+    .dashboard-footer {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #FFFFFF;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 100%;
+      box-sizing: border-box;
+      clear: both;
+    }
+    .next-wave-logo-lg {
+      width: 200px;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+    .wechat-qrcode-img {
+      max-width: 130px;
+      max-height: 130px;
+      object-fit: contain;
+    }
+    .brand-section, .wechat-section {
+      flex: 1;
+      min-width: 280px;
+      padding: 15px;
+      margin: 10px;
+      text-align: center;
+    }
+    .brand-section .brand-title {
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+    .brand-section .brand-description {
+      text-align: left;
+      margin-top: 15px;
+    }
+    .wechat-section {
+      background-color: #f8f8f8;
+      border-radius: 8px;
+      text-align: center;
+    }
+    @media (max-width: 768px) {
+      .dashboard-footer {
+        flex-direction: column;
+        align-items: center;
+      }
+      .brand-section, .wechat-section {
+        width: 100%;
+        text-align: center;
+      }
+    }
+    .about-btn {
+      background-color: #1976D2;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 20px;
+      display: block;
+      width: fit-content;
+      margin: 20px auto 10px;
+    }
+    .about-btn:hover {
+      background-color: #1565C0;
+      transform: translateY(-2px);
+    }
+    
+    /* 侧边栏品牌和公众号样式 */
+    .sidebar-brand {
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      text-align: center;
+      border-top: 1px solid rgba(224, 224, 224, 0.5);
+      padding-top: 15px;
+    }
+    
+    .sidebar-brand-title {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+    
+    .sidebar-logo {
+      width: 180px;
+      height: auto;
+      max-height: 50px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .sidebar-logo:hover {
+      transform: scale(1.05);
+    }
+    
+    .sidebar-wechat {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 10px;
+      margin: 0 15px 10px;
+      background-color: #09BB07;
+      color: white;
+      border-radius: 5px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .sidebar-wechat:hover {
+      background-color: #07A600;
+      transform: translateY(-1px);
+    }
+    
+    .sidebar-wechat i {
+      margin-right: 5px;
+      font-size: 15px;
+    }
+    
+    .sidebar-footer {
+      padding: 15px 0;
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .dashboard-about-btn-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
   <div class="app-container">
@@ -40,8 +187,20 @@
         </li>
       </ul>
       <div class="sidebar-footer">
-        <p>为电脑小白设计</p>
-        <p>版本 1.0.0</p>
+        <!-- 添加品牌logo -->
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-title">技术支持</div>
+          <img src="./assets/next-wave-logo.png" alt="Next Wave" class="sidebar-logo" id="sidebar-brand-logo">
+        </div>
+        
+        <!-- 添加公众号信息 -->
+        <div class="sidebar-wechat" id="sidebar-wechat">
+          <i class="fab fa-weixin"></i>
+          <span>查看公众号</span>
+        </div>
+        
+        <p style="margin: 5px 0;">为电脑小白设计</p>
+        <p style="margin: 5px 0;">版本 1.0.0</p>
       </div>
     </div>
 
@@ -99,6 +258,13 @@
               <p>卸载长期不用的程序可以释放更多空间</p>
             </div>
           </div>
+        </div>
+
+        <!-- 添加"关于CleanC"按钮 -->
+        <div class="dashboard-about-btn-container">
+          <button class="about-btn" id="show-about-btn">
+            <i class="fas fa-info-circle"></i> 关于CleanC
+          </button>
         </div>
       </div>
 
@@ -301,6 +467,67 @@
         <button class="primary-btn" id="modal-close-btn">
           <i class="fas fa-check"></i> 确定
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 关于对话框 -->
+  <div class="modal" id="about-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="fas fa-info-circle"></i>
+        <h3>关于 CleanC</h3>
+        <div class="modal-controls">
+          <span id="about-close-btn"><i class="fas fa-times"></i></span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="about-content">
+          <div class="about-app">
+            <div class="app-logo">
+              <i class="fas fa-broom"></i>
+              <h2>CleanC</h2>
+            </div>
+            <div class="app-version">版本 1.0.0</div>
+            <div class="app-description">
+              <p>CleanC是一款专为电脑初学者设计的C盘清理与优化工具。它提供了比市面上同类产品更快速、
+              界面更直观友好的体验，让用户能够安全、轻松地管理和释放C盘空间。</p>
+            </div>
+          </div>
+          
+          <div class="brand-section">
+            <div class="brand-title">技术提供</div>
+            <div style="text-align: center; width: 100%; display: flex; justify-content: center; margin: 15px 0;">
+              <img src="./assets/next-wave-logo.png" alt="Next Wave" class="next-wave-logo-lg">
+            </div>
+            <div class="brand-description">
+              <p>Next Wave 是一家专注于创新软件解决方案的技术公司，致力于打造简单易用、功能强大的应用程序。
+              我们相信科技应该让生活变得更简单，而不是更复杂。</p>
+            </div>
+          </div>
+          
+          <div class="wechat-section">
+            <div class="wechat-title">
+              <i class="fab fa-weixin"></i>
+              <h4>关注我们的公众号</h4>
+            </div>
+            <div class="wechat-qrcode">
+              <img src="./assets/qrcode-wechat.png" alt="公众号二维码" class="wechat-qrcode-img">
+            </div>
+            <div class="wechat-description">
+              <p>扫描二维码，获取更多系统优化技巧与软件更新</p>
+              <div class="social-icons">
+                <a href="#" class="wechat-icon" title="复制微信公众号">
+                  <i class="fab fa-weixin"></i> Next Wave优化助手
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="about-footer">
+            <div class="copyright">© 2025 Next Wave. 保留所有权利。</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

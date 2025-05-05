@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- 品牌Logo -->
+  <g fill="#1976D2">
+    <!-- 波浪效果 -->
+    <path d="M10,30 C30,10 50,50 70,30 C90,10 110,50 130,30 C150,10 170,50 190,30" stroke="#1976D2" stroke-width="6" fill="none"/>
+    
+    <!-- Next Wave文字 -->
+    <text x="100" y="50" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle">Next Wave</text>
+  </g>
+</svg>

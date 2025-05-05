@@ -594,64 +594,6 @@ body {
   background-color: white;
 }
 
-/* 添加新样式 - 美化Unknown替代显示 */
-.text-muted {
-  color: #8a8a8a;
-  font-style: italic;
-  font-size: 0.9em;
-}
-
-.app-publisher .fas,
-.app-version .fas,
-.app-date .fas,
-.app-size .fas {
-  margin-right: 5px;
-  color: #5f9ea0; /* 使用青绿色调 */
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-.app-table td:hover .fas {
-  transform: scale(1.2);
-  color: #4682b4; /* 鼠标悬停时变为钢蓝色 */
-}
-
-/* 表格行中的图标样式 */
-.app-table tr:nth-child(odd) .fas {
-  color: #6a8caf; /* 奇数行使用不同色调 */
-}
-
-.app-table tr:nth-child(even) .fas {
-  color: #5f9ea0; /* 偶数行使用不同色调 */
-}
-
-/* 应用表格鼠标悬停效果优化 */
-.app-table tr:hover .text-muted {
-  color: #666;
-}
-
-/* 替代Unknown显示的文本悬停提示 */
-.text-muted {
-  position: relative;
-}
-
-.text-muted:hover::after {
-  content: "信息未知";
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  z-index: 10;
-  opacity: 0;
-  animation: fadeIn 0.3s forwards;
-}
-
 .app-list {
   max-height: 500px;
   overflow-y: auto;
@@ -1003,6 +945,22 @@ body {
 }
 
 @media (max-width: 768px) {
+  .dashboard-footer {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .brand-section, .wechat-section {
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .next-wave-logo-lg {
+    margin: 15px auto;
+    display: block;
+  }
+  
   .sidebar {
     width: 200px;
   }
@@ -1298,235 +1256,242 @@ body {
 
 /* 关于按钮 */
 .dashboard-footer {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: var(--card-color);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
   display: flex;
-  justify-content: center;
-  margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  clear: both;
+  box-sizing: border-box;
+}
+
+.brand-section, .wechat-section {
+  flex: 1;
+  min-width: 300px;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 10px;
+}
+
+.powered-by {
+  font-size: 14px;
+  color: var(--light-text);
+  margin-bottom: 10px;
+}
+
+.next-wave-logo {
+  width: 120px;
+  height: 36px;
+  margin: 10px 0;
+  transition: transform 0.3s ease;
+}
+
+.next-wave-logo:hover {
+  transform: scale(1.1);
+}
+
+.next-wave-logo-lg {
+  width: 180px;
+  height: auto;
+  margin: 15px 0;
+  transition: transform 0.3s ease;
+  object-fit: contain;
+}
+
+.next-wave-logo-lg:hover {
+  transform: scale(1.05);
+}
+
+.brand-description {
+  font-size: 14px;
+  color: var(--light-text);
+  margin: 10px 0;
 }
 
 .about-btn {
-  background: none;
-  border: none;
-  color: #757575;
-  font-size: 14px;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--light-text);
   padding: 8px 15px;
+  border-radius: 5px;
+  font-size: 14px;
   cursor: pointer;
-  border-radius: 4px;
   transition: all 0.2s ease;
+  margin-top: 20px;
+  align-self: center;
 }
 
 .about-btn:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: #2196F3;
+  background-color: var(--primary-light);
+  color: white;
+  border-color: var(--primary-light);
 }
 
-/* 关于弹窗内容样式 */
 .about-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  width: 100%; /* 确保内容宽度填满容器 */
+  gap: 30px;
+  padding: 10px;
 }
 
 .about-app {
-  margin-bottom: 30px;
+  text-align: center;
 }
 
 .app-logo {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   margin-bottom: 10px;
 }
 
 .app-logo i {
-  font-size: 28px;
-  color: #2196F3;
+  font-size: 36px;
+  color: var(--primary-color);
   margin-right: 10px;
 }
 
 .app-logo h2 {
-  font-size: 28px;
-  margin: 0;
-  color: #2196F3;
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--primary-dark);
 }
 
 .app-version {
   font-size: 14px;
-  color: #757575;
-  margin: 5px 0;
+  color: var(--light-text);
+  margin-bottom: 15px;
 }
 
 .app-description {
-  font-size: 16px;
-  color: #333;
-  margin: 10px 0;
-}
-
-.brand-section {
-  margin: 20px 0;
-  padding: 20px 0;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
-  width: 100%;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-color);
+  text-align: left;
 }
 
 .brand-title {
-  font-size: 16px;
-  color: #757575;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary-dark);
   margin-bottom: 15px;
+  text-align: center;
 }
 
-.brand-logo-large {
-  margin: 15px 0;
-  padding: 10px;
-  border: 1px solid #f0f0f0;
-  border-radius: 5px;
-  background: white;
-  display: inline-block;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  max-width: 100%; /* 确保不超出父容器 */
-}
-
-.next-wave-logo-lg {
-  width: 100%;
-  max-width: 240px;
-  height: auto;
-}
-
-.brand-description {
-  font-size: 15px;
-  color: #333;
-  line-height: 1.5;
-  margin: 15px 20px;
-}
-
-.about-footer {
-  margin-top: 20px;
-}
-
-.copyright {
-  font-size: 12px;
-  color: #999;
-}
-
-/* 微信公众号样式 */
 .wechat-section {
-  margin: 25px 0;
-  padding: 20px 0;
-  border-top: 1px solid #eee;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background-color: #f8f8f8;
+  text-align: center;
 }
 
 .wechat-title {
-  font-size: 16px;
-  color: #4CAF50;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 15px;
 }
 
+.wechat-title i {
+  color: #09bb07; /* 微信绿色 */
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.wechat-title h4 {
+  font-size: 18px;
+  color: var(--text-color);
+}
+
 .wechat-qrcode {
-  border: 1px solid #e0e0e0;
-  padding: 15px;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 15px;
+  padding: 10px;
   background-color: white;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
   border-radius: 8px;
-  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 100%; /* 确保不超出父容器 */
-  margin: 0 auto;
 }
 
 .wechat-qrcode:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: scale(1.05);
 }
 
 .wechat-qrcode-img {
-  max-width: 100%;
-  max-height: 240px;
-  width: auto;
-  height: auto;
-  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  max-width: 130px;
+  max-height: 130px;
 }
 
 .wechat-description {
   font-size: 14px;
-  color: #666;
-  line-height: 1.5;
-  margin: 15px 0 5px;
-  text-align: center;
-  max-width: 80%;
+  color: var(--light-text);
+  margin-top: 10px;
 }
 
-/* 社交图标样式 */
 .social-icons {
-  margin-top: 10px;
+  margin-top: 15px;
   display: flex;
   justify-content: center;
 }
 
 .wechat-icon {
-  color: #4CAF50;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 5px;
-  border-radius: 50%;
-  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 15px;
+  background-color: #09bb07;
+  color: white;
+  border-radius: 5px;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
 }
 
 .wechat-icon:hover {
-  background-color: rgba(76, 175, 80, 0.1);
-  transform: scale(1.1);
+  background-color: #07a400;
+  cursor: pointer;
 }
 
-/* 图片渲染质量优化 */
+/* 确保SVG和图像文件正确加载的降级处理 */
 .next-wave-logo, .next-wave-logo-lg, .wechat-qrcode-img {
-  -webkit-image-rendering: optimizeQuality;
-  image-rendering: auto;
-  -ms-interpolation-mode: bicubic;
-  object-fit: contain; /* 保持纵横比 */
-  background-color: white; /* 确保背景为白色 */
+  position: relative;
 }
 
-/* 响应式布局优化 */
-@media (max-height: 768px) {
-  .sidebar-footer {
-    padding: 10px;
-  }
-  
-  .nav-item {
-    padding: 10px 20px;
-    min-height: 40px;
-  }
-  
-  .brand-logo {
-    margin-top: 10px;
-    padding-top: 10px;
-  }
-  
-  .next-wave-logo {
-    width: 120px;
-  }
+.next-wave-logo::after, .next-wave-logo-lg::after, .wechat-qrcode-img::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
 }
 
-@media (max-height: 600px) {
-  .sidebar {
-    overflow-y: auto;
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .dashboard-footer {
+    flex-direction: column;
+    align-items: center;
   }
   
-  .sidebar-footer {
-    position: static;
-    margin-top: auto;
+  .brand-section, .wechat-section {
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: center;
   }
   
-  .nav-menu {
-    flex-shrink: 0;
+  .next-wave-logo-lg {
+    margin: 15px auto;
+    display: block;
   }
 }
 
@@ -1557,4 +1522,39 @@ body {
 .toggle-input:disabled + .toggle-slider {
   cursor: wait;
   opacity: 0.7;
+}
+
+/* 响应式调整 */
+@media (max-height: 768px) {
+  .sidebar-footer {
+    padding: 10px;
+  }
+  
+  .nav-item {
+    padding: 10px 20px;
+    min-height: 40px;
+  }
+  
+  .brand-logo {
+    margin: 5px 0;
+  }
+  
+  .next-wave-logo {
+    width: 100px;
+    height: 30px;
+  }
+}
+
+@media (max-height: 600px) {
+  .sidebar {
+    overflow-y: auto;
+  }
+  
+  .sidebar-footer {
+    display: none;
+  }
+  
+  .nav-menu {
+    padding: 10px 0;
+  }
 } 

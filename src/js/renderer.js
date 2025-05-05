@@ -1708,14 +1708,25 @@ function initUninstall() {
   
   // 显示程序列表
   function displayAppList(apps) {
-    // 过滤掉没有卸载命令的应用程序
-    const filteredApps = apps.filter(app => {
-      const uninstallString = app.uninstallString || '';
-      return uninstallString.trim() !== '';
-    });
-    
     // 清空列表
     appList.innerHTML = '';
+    
+    // 过滤掉不能卸载的程序
+    const installableApps = apps.filter(app => {
+      // 检查是否有有效的卸载字符串
+      return app.uninstallString && app.uninstallString.trim() !== '';
+    });
+    
+    // 如果没有可卸载的程序，显示提示
+    if (installableApps.length === 0) {
+      appList.innerHTML = `
+        <div class="no-apps-message">
+          <i class="fas fa-info-circle"></i>
+          <p>未找到可卸载的程序</p>
+        </div>
+      `;
+      return;
+    }
     
     // 添加智能分类头部
     const smartSelectHeader = document.createElement('div');
@@ -1737,7 +1748,7 @@ function initUninstall() {
         </button>
         </div>
       <div class="filtered-count">
-        显示 ${filteredApps.length}/${apps.length} 个程序 (已过滤 ${apps.length - filteredApps.length} 个不可卸载程序)
+        显示 ${installableApps.length}/${installableApps.length} 个程序
       </div>
     `;
     appList.appendChild(smartSelectHeader);
@@ -1768,26 +1779,36 @@ function initUninstall() {
     const tbody = document.createElement('tbody');
     
     // 添加所有可卸载的应用程序
-    filteredApps.forEach(app => {
+    installableApps.forEach(app => {
       // 修复中文乱码问题 - 确保所有字符串都是有效的
       const name = decodeIfNeeded(app.name);
       const publisher = decodeIfNeeded(app.publisher);
       const version = decodeIfNeeded(app.version);
       
-      // 替换Unknown值为更友好的显示方式
-      const displayPublisher = publisher === 'Unknown' ? '<i class="fas fa-building text-muted"></i> <span class="text-muted">未知发布商</span>' : publisher;
-      const displayVersion = version === 'Unknown' ? '<i class="fas fa-tag text-muted"></i> <span class="text-muted">未知版本</span>' : version;
+      // 获取应用程序图标 (根据名称选择适当的FontAwesome图标)
+      let appIcon = '<i class="fas fa-cube"></i> '; // 默认图标
       
-      // 处理安装日期显示
-      let displayDate = app.installDate;
-      if (app.installDate === 'Unknown') {
-        displayDate = '<i class="fas fa-calendar-alt text-muted"></i> <span class="text-muted">未知日期</span>';
-      }
-      
-      // 处理大小显示
-      let displaySize = app.size;
-      if (app.size === 'Unknown') {
-        displaySize = '<i class="fas fa-weight-hanging text-muted"></i> <span class="text-muted">未知大小</span>';
+      // 根据应用名称添加特定图标
+      const appNameLower = name.toLowerCase();
+      if (appNameLower.includes('chrome') || appNameLower.includes('google')) {
+        appIcon = '<i class="fab fa-chrome"></i> ';
+      } else if (appNameLower.includes('firefox')) {
+        appIcon = '<i class="fab fa-firefox"></i> ';
+      } else if (appNameLower.includes('edge')) {
+        appIcon = '<i class="fab fa-edge"></i> ';
+      } else if (appNameLower.includes('office') || appNameLower.includes('word') || 
+                 appNameLower.includes('excel') || appNameLower.includes('powerpoint')) {
+        appIcon = '<i class="fas fa-file-word"></i> ';
+      } else if (appNameLower.includes('adobe') || appNameLower.includes('photoshop') || 
+                 appNameLower.includes('illustrator') || appNameLower.includes('acrobat')) {
+        appIcon = '<i class="fas fa-paint-brush"></i> ';
+      } else if (appNameLower.includes('游戏') || appNameLower.includes('game')) {
+        appIcon = '<i class="fas fa-gamepad"></i> ';
+      } else if (appNameLower.includes('音乐') || appNameLower.includes('music')) {
+        appIcon = '<i class="fas fa-music"></i> ';
+      } else if (appNameLower.includes('视频') || appNameLower.includes('video') || 
+                 appNameLower.includes('播放器') || appNameLower.includes('player')) {
+        appIcon = '<i class="fas fa-film"></i> ';
       }
       
       const tr = document.createElement('tr');
@@ -1801,18 +1822,36 @@ function initUninstall() {
       // 添加可搜索的关键词属性
       tr.setAttribute('data-keywords', `${name} ${publisher} ${version}`.toLowerCase());
       
-      // 获取卸载字符串
+      // 检查卸载字符串是否有效 (这里其实已不需要再检查，因为前面已过滤)
       let uninstallString = app.uninstallString || '';
       
       // HTML转义卸载字符串，防止XSS攻击
       const escapedUninstallString = uninstallString.replace(/"/g, '&quot;');
       
+      // 根据publisher是否为"Unknown"或空添加图标
+      let publisherDisplay = publisher;
+      if (publisher === '<i class="fas fa-cube"></i> <span style="color:#888">未知应用</span>' || 
+          !publisher || publisher === 'Unknown') {
+        publisherDisplay = '<i class="fas fa-building"></i> <span style="color:#888">未知发布商</span>';
+      }
+      
+      // 对日期和大小做同样处理
+      let dateDisplay = app.installDate;
+      if (dateDisplay === 'Unknown' || !dateDisplay) {
+        dateDisplay = '<i class="fas fa-calendar"></i> <span style="color:#888">未知日期</span>';
+      }
+      
+      let sizeDisplay = app.size;
+      if (sizeDisplay === 'Unknown' || !sizeDisplay || sizeDisplay === '0 Bytes') {
+        sizeDisplay = '<i class="fas fa-weight"></i> <span style="color:#888">未知大小</span>';
+      }
+      
       tr.innerHTML = `
-        <td class="app-name">${name}</td>
-        <td class="app-publisher">${displayPublisher}</td>
-        <td class="app-version">${displayVersion}</td>
-        <td class="app-date">${displayDate}</td>
-        <td class="app-size">${displaySize}</td>
+        <td class="app-name">${appIcon}${name}</td>
+        <td class="app-publisher">${publisherDisplay}</td>
+        <td class="app-version">${version}</td>
+        <td class="app-date">${dateDisplay}</td>
+        <td class="app-size">${sizeDisplay}</td>
         <td class="app-action">
           <button class="uninstall-btn" data-uninstall-string="${escapedUninstallString}" title="卸载此程序">
             卸载
@@ -2154,52 +2193,6 @@ function initUninstall() {
         background-color: #f0f7ff;
       }
       
-      /* 优化Unknown替代显示 */
-      .text-muted {
-        color: #8a8a8a;
-        font-style: italic;
-        font-size: 0.9em;
-        transition: all 0.2s ease;
-      }
-      
-      .app-publisher .fas,
-      .app-version .fas,
-      .app-date .fas,
-      .app-size .fas {
-        margin-right: 5px;
-        color: #5f9ea0;
-        font-size: 14px;
-        transition: all 0.3s ease;
-      }
-      
-      .app-table td:hover .fas {
-        transform: scale(1.2);
-        color: #4682b4;
-      }
-      
-      .app-table tr:nth-child(odd) .fas {
-        color: #6a8caf;
-      }
-      
-      .app-table tr:nth-child(even) .fas {
-        color: #5f9ea0;
-      }
-      
-      .app-table tr:hover .text-muted {
-        color: #666;
-      }
-      
-      /* 图标加入动画效果 */
-      @keyframes softPulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-        100% { transform: scale(1); }
-      }
-      
-      .app-table tr:hover .fas {
-        animation: softPulse 1.5s infinite;
-      }
-      
       .smart-select-header {
         margin-bottom: 10px;
         padding: 10px;
@@ -2389,10 +2382,68 @@ function initAboutModal() {
   const aboutModal = document.getElementById('about-modal');
   const showAboutBtn = document.getElementById('show-about-btn');
   const closeAboutBtn = document.getElementById('about-close-btn');
-  const sidebarWechatBtn = document.getElementById('sidebar-wechat-btn');
+  const sidebarWechatBtn = document.getElementById('sidebar-wechat');
+  const sidebarBrandLogo = document.getElementById('sidebar-brand-logo');
   const modalContent = aboutModal.querySelector('.modal-content');
   const modalHeader = aboutModal.querySelector('.modal-header');
   const resetSizeBtn = document.getElementById('reset-modal-size');
+  
+  // 添加侧边栏公众号点击事件
+  if (sidebarWechatBtn) {
+    sidebarWechatBtn.addEventListener('click', () => {
+      aboutModal.style.display = 'flex';
+      resetModalSize(); // 使用重置函数
+      
+      // 滚动到公众号部分
+      setTimeout(() => {
+        const wechatSection = document.querySelector('.wechat-section');
+        if (wechatSection) {
+          wechatSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    });
+  }
+  
+  // 添加侧边栏品牌logo点击事件
+  if (sidebarBrandLogo) {
+    sidebarBrandLogo.addEventListener('click', () => {
+      aboutModal.style.display = 'flex';
+      resetModalSize(); // 使用重置函数
+      
+      // 滚动到品牌部分
+      setTimeout(() => {
+        const brandSection = document.querySelector('.brand-section');
+        if (brandSection) {
+          brandSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    });
+  }
+  
+  // 添加公众号名称复制功能
+  const wechatIcon = document.querySelector('.wechat-icon');
+  if (wechatIcon) {
+    wechatIcon.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      const wechatName = 'Next Wave优化助手';
+      
+      // 创建一个临时的文本区域元素
+      const textarea = document.createElement('textarea');
+      textarea.value = wechatName;
+      document.body.appendChild(textarea);
+      
+      // 选择文本并复制
+      textarea.select();
+      document.execCommand('copy');
+      
+      // 移除临时元素
+      document.body.removeChild(textarea);
+      
+      // 显示提示
+      showToast('公众号名称已复制到剪贴板', 'info');
+    });
+  }
   
   // 重置弹窗大小函数
   function resetModalSize() {
@@ -2475,22 +2526,6 @@ function initAboutModal() {
     showAboutBtn.addEventListener('click', () => {
       aboutModal.style.display = 'flex';
       resetModalSize(); // 使用重置函数
-    });
-  }
-  
-  // 侧边栏微信图标事件
-  if (sidebarWechatBtn) {
-    sidebarWechatBtn.addEventListener('click', () => {
-      aboutModal.style.display = 'flex';
-      resetModalSize(); // 使用重置函数
-      
-      // 滚动到公众号部分
-      setTimeout(() => {
-        const wechatSection = document.querySelector('.wechat-section');
-        if (wechatSection) {
-          wechatSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
     });
   }
   
@@ -2594,42 +2629,57 @@ function addImageErrorHandlers() {
     img.onerror = function() {
       console.error(`图片加载失败: ${this.src}`);
       
-      // 根据类名判断图片类型
-      if (this.classList.contains('next-wave-logo') || this.classList.contains('next-wave-logo-lg')) {
+      // 根据类名或src判断图片类型
+      if (this.classList.contains('next-wave-logo') || 
+          this.classList.contains('next-wave-logo-lg') || 
+          this.src.includes('next-wave-logo')) {
         // 替换为文本
         const textNode = document.createElement('div');
         textNode.textContent = 'Next Wave';
         textNode.style.fontWeight = 'bold';
-        textNode.style.color = '#333';
-        textNode.style.padding = '5px';
+        textNode.style.color = '#1976D2';
+        textNode.style.fontSize = '24px';
+        textNode.style.padding = '10px';
         textNode.style.textAlign = 'center';
+        textNode.style.border = '1px solid #e0e0e0';
+        textNode.style.borderRadius = '8px';
+        textNode.style.backgroundColor = '#f5f5f5';
         this.parentNode.replaceChild(textNode, this);
-      } else if (this.classList.contains('wechat-qrcode-img')) {
+      } else if (this.classList.contains('wechat-qrcode-img') || this.src.includes('qrcode')) {
         // 替换为二维码占位
         const qrPlaceholder = document.createElement('div');
         qrPlaceholder.innerHTML = '<i class="fas fa-qrcode" style="font-size: 100px; color: #4CAF50;"></i>';
         qrPlaceholder.style.display = 'flex';
         qrPlaceholder.style.justifyContent = 'center';
         qrPlaceholder.style.alignItems = 'center';
-        qrPlaceholder.style.width = '180px';
-        qrPlaceholder.style.height = '180px';
+        qrPlaceholder.style.width = '130px';
+        qrPlaceholder.style.height = '130px';
         qrPlaceholder.style.backgroundColor = '#f9f9f9';
         qrPlaceholder.style.border = '1px solid #eee';
+        qrPlaceholder.style.margin = '0 auto';
         this.parentNode.replaceChild(qrPlaceholder, this);
       }
     };
+    
+    // 确保图像已加载好
+    if (img.complete) {
+      if (img.naturalWidth === 0) {
+        // 图像加载失败，触发onerror事件
+        img.dispatchEvent(new Event('error'));
+      }
+    }
   });
 } 
 
 // 添加一个辅助函数用于修复乱码
 function decodeIfNeeded(text) {
-  // 如果为空，返回Unknown
-  if (!text) return 'Unknown';
+  // 如果为空，返回图标+文本组合而不是"Unknown"
+  if (!text) return '<i class="fas fa-cube"></i> <span style="color:#888">未知应用</span>';
   
   // 检测是否是特殊格式的变量名占位符，如${(arpDisplayName)}
   if (text.includes('${(') && text.includes(')}')) {
     console.log(`检测到变量占位符: ${text}`);
-    return 'Unknown'; // 返回Unknown而不是占位符
+    return '<i class="fas fa-cube"></i> <span style="color:#888">未知应用</span>';
   }
   
   try {
@@ -2705,6 +2755,6 @@ function decodeIfNeeded(text) {
     return text;
   } catch (e) {
     console.error('处理文本时出错:', e);
-    return text;
+    return '<i class="fas fa-exclamation-triangle"></i> <span style="color:#888">解析错误</span>';
   }
 } 

@@ -1,31 +1,21 @@
-# 依赖包文件夹
+# 依赖目录
 node_modules/
 
-# 构建输出目录
+# 构建输出
 dist/
-out/
 build/
-release/
+out/
 
 # 日志文件
-logs/
+logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# 运行时数据
-.DS_Store
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# 调试文件
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
+# 测试覆盖率
+coverage/
 
 # 环境变量文件
 .env
@@ -34,36 +24,34 @@ Desktop.ini
 .env.test.local
 .env.production.local
 
-# 覆盖率报告
-coverage/
+# 缓存目录
+.cache/
+.npm
+
+# 编辑器目录和文件
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# 特定于Electron的文件
+app/renderer.prod.js
+app/renderer.prod.js.map
+app/style.css
+app/style.css.map
+app/dist/
+app/main.prod.js
+app/main.prod.js.map
+
+# 特定于Windows的安装包和输出
+*.exe
+*.msi
+*.msix
+*.msm
+*.msp
 
 # 临时文件
 tmp/
-temp/
-
-# 测试结果
-test-results/
-
-# 本地配置文件
-config.local.js
-
-# 打包后的应用程序
-*.exe
-*.dmg
-*.app
-*.msi
-*.deb
-*.rpm
-*.AppImage
-*.zip
-*.tar.gz
-
-# 敏感/私密信息
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-secrets.json
-
-# Electron打包相关
-electron-builder.yml 
+temp/ 
