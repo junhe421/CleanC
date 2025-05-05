@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <!-- 背景 -->
+  <rect width="1200" height="800" fill="#F5F5F5"/>
+  
+  <!-- 应用窗口 -->
+  <rect x="50" y="50" width="1100" height="700" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="2"/>
+  
+  <!-- 侧边栏 -->
+  <rect x="50" y="50" width="240" height="700" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="2"/>
+  
+  <!-- 侧边栏标题 -->
+  <rect x="50" y="50" width="240" height="70" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+  <text x="110" y="92" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1976D2">CleanC</text>
+  <circle cx="85" cy="85" r="20" fill="#2196F3"/>
+  <text x="85" y="92" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#FFFFFF">C</text>
+  
+  <!-- 侧边栏菜单 -->
+  <rect x="60" y="140" width="220" height="50" rx="5" ry="5" fill="#64B5F6"/>
+  <text x="130" y="172" font-family="Arial, sans-serif" font-size="16" fill="#FFFFFF">主页</text>
+  
+  <rect x="60" y="200" width="220" height="50" rx="5" ry="5" fill="#FFFFFF"/>
+  <text x="130" y="232" font-family="Arial, sans-serif" font-size="16" fill="#666666">快速清理</text>
+  
+  <rect x="60" y="260" width="220" height="50" rx="5" ry="5" fill="#FFFFFF"/>
+  <text x="130" y="292" font-family="Arial, sans-serif" font-size="16" fill="#666666">大文件查找</text>
+  
+  <rect x="60" y="320" width="220" height="50" rx="5" ry="5" fill="#FFFFFF"/>
+  <text x="130" y="352" font-family="Arial, sans-serif" font-size="16" fill="#666666">重复文件</text>
+  
+  <rect x="60" y="380" width="220" height="50" rx="5" ry="5" fill="#FFFFFF"/>
+  <text x="130" y="412" font-family="Arial, sans-serif" font-size="16" fill="#666666">程序卸载</text>
+  
+  <rect x="60" y="440" width="220" height="50" rx="5" ry="5" fill="#FFFFFF"/>
+  <text x="130" y="472" font-family="Arial, sans-serif" font-size="16" fill="#666666">开机加速</text>
+  
+  <!-- 侧边栏底部 -->
+  <text x="170" y="720" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#999999">为电脑小白设计</text>
+  <text x="170" y="740" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#999999">版本 1.0.0</text>
+  
+  <!-- 主内容区域 -->
+  <rect x="291" y="50" width="859" height="700" fill="#FFFFFF"/>
+  
+  <!-- 主内容标题 -->
+  <text x="330" y="100" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1976D2">欢迎使用 CleanC 清理工具</text>
+  <text x="330" y="130" font-family="Arial, sans-serif" font-size="16" fill="#666666">快速安全地清理您的C盘，释放宝贵空间</text>
+  
+  <!-- 磁盘信息卡片 -->
+  <rect x="330" y="160" width="780" height="200" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="2"/>
+  
+  <!-- 磁盘使用饼图 -->
+  <circle cx="460" cy="260" r="80" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+  <path d="M 460 260 L 460 180 A 80 80 0 0 1 535 230 Z" fill="#1976D2"/>
+  <path d="M 460 260 L 535 230 A 80 80 0 1 1 460 180 Z" fill="#4CAF50"/>
+  <circle cx="460" cy="260" r="50" fill="#FFFFFF"/>
+  
+  <!-- 磁盘信息 -->
+  <text x="600" y="200" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1976D2">C盘使用情况</text>
+  
+  <text x="600" y="240" font-family="Arial, sans-serif" font-size="16" fill="#666666">总容量:</text>
+  <text x="720" y="240" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333333">256 GB</text>
+  
+  <text x="600" y="270" font-family="Arial, sans-serif" font-size="16" fill="#666666">已用空间:</text>
+  <text x="720" y="270" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333333">135 GB (52.7%)</text>
+  
+  <text x="600" y="300" font-family="Arial, sans-serif" font-size="16" fill="#666666">可用空间:</text>
+  <text x="720" y="300" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333333">121 GB (47.3%)</text>
+  
+  <rect x="600" y="320" width="400" height="50" rx="5" ry="5" fill="#2196F3"/>
+  <text x="800" y="352" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FFFFFF">开始扫描系统</text>
+  
+  <!-- 快速小贴士 -->
+  <rect x="330" y="390" width="780" height="240" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="2"/>
+  <text x="360" y="430" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1976D2">快速小贴士</text>
+  
+  <!-- 贴士卡片1 -->
+  <rect x="360" y="450" width="240" height="150" rx="8" ry="8" fill="#F9F9F9"/>
+  <circle cx="390" cy="490" r="15" fill="#2196F3"/>
+  <text x="430" y="490" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333333">定期清理临时文件</text>
+  <text x="380" y="520" font-family="Arial, sans-serif" font-size="14" fill="#666666">临时文件会占用大量空间，</text>
+  <text x="380" y="545" font-family="Arial, sans-serif" font-size="14" fill="#666666">建议每周清理一次</text>
+  
+  <!-- 贴士卡片2 -->
+  <rect x="620" y="450" width="240" height="150" rx="8" ry="8" fill="#F9F9F9"/>
+  <circle cx="650" cy="490" r="15" fill="#F44336"/>
+  <text x="690" y="490" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333333">注意备份重要文件</text>
+  <text x="640" y="520" font-family="Arial, sans-serif" font-size="14" fill="#666666">清理前请确保重要文件</text>
+  <text x="640" y="545" font-family="Arial, sans-serif" font-size="14" fill="#666666">已备份</text>
+  
+  <!-- 贴士卡片3 -->
+  <rect x="880" y="450" width="240" height="150" rx="8" ry="8" fill="#F9F9F9"/>
+  <circle cx="910" cy="490" r="15" fill="#FFC107"/>
+  <text x="950" y="490" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333333">卸载不用的程序</text>
+  <text x="900" y="520" font-family="Arial, sans-serif" font-size="14" fill="#666666">卸载长期不用的程序可以</text>
+  <text x="900" y="545" font-family="Arial, sans-serif" font-size="14" fill="#666666">释放更多空间</text>
+</svg> 

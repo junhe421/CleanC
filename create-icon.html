@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CleanC - 创建图标</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #2196F3;
+      text-align: center;
+    }
+    .steps {
+      margin-top: 20px;
+    }
+    .step {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-left: 4px solid #2196F3;
+      background-color: #f9f9f9;
+    }
+    .step h3 {
+      margin-top: 0;
+      color: #1976D2;
+    }
+    .icon-preview {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .icon-preview svg {
+      width: 128px;
+      height: 128px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      background-color: white;
+    }
+    .note {
+      background-color: #fff3cd;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+    button {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #1976D2;
+    }
+    canvas {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>CleanC - 创建应用图标</h1>
+    
+    <div class="icon-preview">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="128" height="128">
+        <!-- 背景圆形 -->
+        <circle cx="256" cy="256" r="256" fill="#2196F3"/>
+        
+        <!-- 内部圆环 -->
+        <circle cx="256" cy="256" r="220" fill="#1976D2"/>
+        <circle cx="256" cy="256" r="180" fill="#FFFFFF"/>
+        
+        <!-- 磁盘/C盘图形 -->
+        <g transform="translate(145, 160)">
+          <!-- 磁盘外壳 -->
+          <rect x="0" y="0" width="220" height="180" rx="15" ry="15" fill="#E0E0E0"/>
+          <rect x="10" y="10" width="200" height="160" rx="10" ry="10" fill="#F5F5F5"/>
+          
+          <!-- 磁盘标签 -->
+          <rect x="30" y="30" width="160" height="120" rx="5" ry="5" fill="#2196F3"/>
+          
+          <!-- C盘文字 -->
+          <text x="110" y="105" font-family="Arial, sans-serif" font-size="80" font-weight="bold" text-anchor="middle" fill="#FFFFFF">C</text>
+        </g>
+        
+        <!-- 清理的扫帚图标 -->
+        <g transform="translate(340, 140) rotate(30)">
+          <rect x="0" y="0" width="20" height="150" rx="5" ry="5" fill="#795548"/>
+          <path d="M0,0 L80,0 L60,80 L-20,80 Z" fill="#8D6E63"/>
+          <g transform="translate(-20, 80)">
+            <rect x="0" y="0" width="80" height="10" fill="#5D4037"/>
+            <rect x="5" y="10" width="3" height="40" fill="#FFD54F" rx="1" ry="1"/>
+            <rect x="15" y="10" width="3" height="50" fill="#FFD54F" rx="1" ry="1"/>
+            <rect x="25" y="10" width="3" height="45" fill="#FFD54F" rx="1" ry="1"/>
+            <rect x="35" y="10" width="3" height="55" fill="#FFD54F" rx="1" ry="1"/>
+            <rect x="45" y="10" width="3" height="50" fill="#FFD54F" rx="1" ry="1"/>
+            <rect x="55" y="10" width="3" height="45" fill="#FFD54F" rx="1" ry="1"/>
+            <rect x="65" y="10" width="3" height="40" fill="#FFD54F" rx="1" ry="1"/>
+            <rect x="75" y="10" width="3" height="35" fill="#FFD54F" rx="1" ry="1"/>
+          </g>
+        </g>
+        
+        <!-- 闪电图标 -->
+        <path d="M200,130 L240,130 L220,190 L260,190 L180,320 L200,220 L160,220 Z" fill="#FFEB3B" stroke="#FBC02D" stroke-width="5"/>
+      </svg>
+    </div>
+    
+    <div class="steps">
+      <div class="step">
+        <h3>第一步：下载图标</h3>
+        <p>点击下方按钮，将图标下载为PNG格式文件。</p>
+        <button onclick="downloadPNG()">下载PNG图标</button>
+      </div>
+      
+      <div class="step">
+        <h3>第二步：转换为ICO文件</h3>
+        <p>使用在线转换工具，将PNG转换为ICO格式：</p>
+        <ol>
+          <li>访问 <a href="https://www.pngtoicon.com/" target="_blank" rel="noopener noreferrer">pngtoicon.com</a> 或任何PNG到ICO的在线转换工具</li>
+          <li>上传您刚才下载的PNG文件</li>
+          <li>转换并下载ICO文件</li>
+        </ol>
+      </div>
+      
+      <div class="step">
+        <h3>第三步：保存ICO文件</h3>
+        <p>将下载的ICO文件保存为：</p>
+        <code>assets/icon.ico</code>
+        <p>这样安装程序就能正确显示应用图标了。</p>
+      </div>
+    </div>
+    
+    <div class="note">
+      <p><strong>注意：</strong> 这是一个临时解决方案。如果您有专业的图像编辑软件（如Photoshop或GIMP），可以直接创建ICO格式的图标文件。</p>
+    </div>
+  </div>
+  
+  <canvas id="canvas" width="256" height="256"></canvas>
+  
+  <script>
+    function downloadPNG() {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      const svgData = new XMLSerializer().serializeToString(document.querySelector('svg'));
+      const img = new Image();
+      const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+      const url = URL.createObjectURL(svgBlob);
+      
+      img.onload = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        
+        const link = document.createElement('a');
+        link.download = 'cleanc-icon.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      };
+      
+      img.src = url;
+    }
+  </script>
+</body>
+</html> 

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CleanC - 简单易用的C盘清理工具</title>
+  <!-- 引入FontAwesome图标 -->
+  <link rel="stylesheet" href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+  <!-- 引入应用自定义样式 -->
+  <link rel="stylesheet" href="./src/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边导航栏 -->
+    <div class="sidebar">
+      <div class="logo">
+        <i class="fas fa-broom"></i>
+        <h1>CleanC</h1>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item active" data-tab="dashboard">
+          <i class="fas fa-home"></i>
+          <span>主页</span>
+        </li>
+        <li class="nav-item" data-tab="quick-clean">
+          <i class="fas fa-bolt"></i>
+          <span>快速清理</span>
+        </li>
+        <li class="nav-item" data-tab="large-files">
+          <i class="fas fa-file-archive"></i>
+          <span>大文件查找</span>
+        </li>
+        <li class="nav-item" data-tab="duplicate-files">
+          <i class="fas fa-copy"></i>
+          <span>重复文件</span>
+        </li>
+        <li class="nav-item" data-tab="uninstall">
+          <i class="fas fa-trash-alt"></i>
+          <span>程序卸载</span>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <p>为电脑小白设计</p>
+        <p>版本 1.0.0</p>
+      </div>
+    </div>
+
+    <!-- 主内容区域 -->
+    <div class="main-content">
+      <!-- 仪表盘 -->
+      <div class="content-tab active" id="dashboard">
+        <div class="header">
+          <h2>欢迎使用 CleanC 清理工具</h2>
+          <p>快速安全地清理您的C盘，释放宝贵空间</p>
+        </div>
+
+        <div class="disk-info-card">
+          <div class="disk-usage">
+            <canvas id="diskChart"></canvas>
+          </div>
+          <div class="disk-details">
+            <h3>C盘使用情况</h3>
+            <div class="disk-stats">
+              <div class="stat-item">
+                <span class="label">总容量</span>
+                <span class="value" id="total-space">计算中...</span>
+              </div>
+              <div class="stat-item">
+                <span class="label">已用空间</span>
+                <span class="value" id="used-space">计算中...</span>
+              </div>
+              <div class="stat-item">
+                <span class="label">可用空间</span>
+                <span class="value" id="free-space">计算中...</span>
+              </div>
+            </div>
+            <button class="scan-btn primary-btn" id="scan-system-btn">
+              <i class="fas fa-search"></i> 开始扫描系统
+            </button>
+          </div>
+        </div>
+
+        <div class="quick-tips">
+          <h3>快速小贴士</h3>
+          <div class="tips-container">
+            <div class="tip-card">
+              <i class="fas fa-lightbulb"></i>
+              <h4>定期清理临时文件</h4>
+              <p>临时文件会占用大量空间，建议每周清理一次</p>
+            </div>
+            <div class="tip-card">
+              <i class="fas fa-exclamation-circle"></i>
+              <h4>注意备份重要文件</h4>
+              <p>清理前请确保重要文件已备份</p>
+            </div>
+            <div class="tip-card">
+              <i class="fas fa-star"></i>
+              <h4>卸载不用的程序</h4>
+              <p>卸载长期不用的程序可以释放更多空间</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 快速清理 -->
+      <div class="content-tab" id="quick-clean">
+        <div class="header">
+          <h2>快速清理</h2>
+          <p>一键清理系统垃圾文件，安全快速</p>
+        </div>
+
+        <div class="scan-results" id="quick-clean-results">
+          <div class="result-summary">
+            <div class="summary-card">
+              <i class="fas fa-trash-alt"></i>
+              <h3>可清理空间</h3>
+              <p id="total-junk-size">0 MB</p>
+            </div>
+            <div class="summary-card">
+              <i class="fas fa-list"></i>
+              <h3>垃圾文件数量</h3>
+              <p id="junk-file-count">0 项</p>
+            </div>
+          </div>
+
+          <div class="cleanup-items">
+            <h3>清理项目</h3>
+            <div class="item-list" id="cleanup-item-list">
+              <!-- 清理项列表将动态生成 -->
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="secondary-btn" id="scan-again-btn">
+              <i class="fas fa-redo"></i> 重新扫描
+            </button>
+            <button class="primary-btn" id="clean-selected-btn">
+              <i class="fas fa-broom"></i> 清理所选项目
+            </button>
+          </div>
+        </div>
+
+        <div class="scan-placeholder" id="scan-placeholder">
+          <div class="placeholder-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h3>点击下方按钮开始扫描</h3>
+          <p>我们将安全地分析您的系统并找出可以清理的文件</p>
+          <button class="primary-btn" id="start-quick-scan-btn">
+            <i class="fas fa-bolt"></i> 开始扫描
+          </button>
+        </div>
+
+        <!-- 扫描进行中状态 -->
+        <div class="scanning-status" id="scanning-status">
+          <div class="spinner">
+            <i class="fas fa-circle-notch fa-spin"></i>
+          </div>
+          <h3>正在扫描系统...</h3>
+          <p>请稍候，这可能需要几分钟时间</p>
+          <div class="progress-bar">
+            <div class="progress" id="scan-progress"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 大文件查找 -->
+      <div class="content-tab" id="large-files">
+        <div class="header">
+          <h2>大文件查找</h2>
+          <p>找出占用空间最大的文件，合理管理您的磁盘空间</p>
+        </div>
+
+        <div class="search-controls">
+          <div class="size-filter">
+            <label for="min-file-size">最小文件大小:</label>
+            <select id="min-file-size">
+              <option value="50">50 MB</option>
+              <option value="100" selected>100 MB</option>
+              <option value="500">500 MB</option>
+              <option value="1000">1 GB</option>
+            </select>
+          </div>
+          <button class="primary-btn" id="find-large-files-btn">
+            <i class="fas fa-search"></i> 查找大文件
+          </button>
+        </div>
+
+        <div class="large-files-results" id="large-files-results">
+          <div class="result-header">
+            <h3>查找结果</h3>
+            <p>以下是占用空间最大的文件</p>
+          </div>
+          <div class="file-list-container">
+            <table class="file-list">
+              <thead>
+                <tr>
+                  <th>文件名</th>
+                  <th>大小</th>
+                  <th>位置</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="large-files-tbody">
+                <!-- 大文件列表将动态生成 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="scan-placeholder" id="large-files-placeholder">
+          <div class="placeholder-icon">
+            <i class="fas fa-file-archive"></i>
+          </div>
+          <h3>查找大文件</h3>
+          <p>点击上方按钮开始查找占用空间较大的文件</p>
+        </div>
+      </div>
+
+      <!-- 重复文件 -->
+      <div class="content-tab" id="duplicate-files">
+        <div class="header">
+          <h2>重复文件查找</h2>
+          <p>查找并删除内容完全相同的重复文件</p>
+        </div>
+
+        <div class="duplicate-search-controls">
+          <div class="path-selection">
+            <label for="search-path">搜索路径:</label>
+            <select id="search-path">
+              <option value="documents">我的文档</option>
+              <option value="downloads">下载</option>
+              <option value="pictures">图片</option>
+              <option value="videos">视频</option>
+              <option value="music">音乐</option>
+              <option value="custom">自定义...</option>
+            </select>
+            <input type="text" id="custom-path" placeholder="输入自定义路径...">
+          </div>
+          <button class="primary-btn" id="find-duplicates-btn">
+            <i class="fas fa-search"></i> 查找重复文件
+          </button>
+        </div>
+
+        <div class="duplicate-results" id="duplicate-results">
+          <!-- 重复文件查找结果将在这里显示 -->
+        </div>
+
+        <div class="scan-placeholder" id="duplicate-placeholder">
+          <div class="placeholder-icon">
+            <i class="fas fa-copy"></i>
+          </div>
+          <h3>查找重复文件</h3>
+          <p>选择要扫描的文件夹，然后点击上方按钮开始查找</p>
+        </div>
+      </div>
+
+      <!-- 程序卸载 -->
+      <div class="content-tab" id="uninstall">
+        <div class="header">
+          <h2>程序轻松卸载</h2>
+          <p>卸载不需要的程序，释放更多空间</p>
+        </div>
+
+        <div class="app-list-container">
+          <div class="app-filter">
+            <input type="text" id="app-search" placeholder="搜索程序...">
+            <select id="app-sort" title="排序方式">
+              <option value="name">按名称排序</option>
+              <option value="size">按大小排序</option>
+              <option value="date">按安装日期排序</option>
+            </select>
+          </div>
+
+          <div class="app-list" id="installed-apps">
+            <!-- 已安装程序列表将动态生成 -->
+            <div class="loading-apps">
+              <i class="fas fa-circle-notch fa-spin"></i>
+              <p>正在加载已安装程序...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 清理完成弹窗 -->
+  <div class="modal" id="cleanup-complete-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="fas fa-check-circle"></i>
+        <h3>清理完成！</h3>
+      </div>
+      <div class="modal-body">
+        <p>已成功清理 <span id="freed-space">0 MB</span> 的磁盘空间。</p>
+        <div class="cleanup-summary" id="cleanup-summary">
+          <!-- 清理摘要将动态生成 -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="primary-btn" id="modal-close-btn">
+          <i class="fas fa-check"></i> 确定
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript库 -->
+  <script src="./node_modules/chart.js/dist/chart.umd.js"></script>
+  <!-- 应用脚本 -->
+  <script src="./src/js/renderer.js"></script>
+</body>
+</html> 
