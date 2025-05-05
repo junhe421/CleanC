@@ -1708,6 +1708,12 @@ function initUninstall() {
   
   // 显示程序列表
   function displayAppList(apps) {
+    // 过滤掉没有卸载命令的应用程序
+    const filteredApps = apps.filter(app => {
+      const uninstallString = app.uninstallString || '';
+      return uninstallString.trim() !== '';
+    });
+    
     // 清空列表
     appList.innerHTML = '';
     
@@ -1731,7 +1737,7 @@ function initUninstall() {
         </button>
         </div>
       <div class="filtered-count">
-        显示 ${apps.length}/${apps.length} 个程序
+        显示 ${filteredApps.length}/${apps.length} 个程序 (已过滤 ${apps.length - filteredApps.length} 个不可卸载程序)
       </div>
     `;
     appList.appendChild(smartSelectHeader);
@@ -1761,12 +1767,28 @@ function initUninstall() {
     // 创建表格内容
     const tbody = document.createElement('tbody');
     
-    // 添加所有应用程序
-    apps.forEach(app => {
+    // 添加所有可卸载的应用程序
+    filteredApps.forEach(app => {
       // 修复中文乱码问题 - 确保所有字符串都是有效的
       const name = decodeIfNeeded(app.name);
       const publisher = decodeIfNeeded(app.publisher);
       const version = decodeIfNeeded(app.version);
+      
+      // 替换Unknown值为更友好的显示方式
+      const displayPublisher = publisher === 'Unknown' ? '<i class="fas fa-building text-muted"></i> <span class="text-muted">未知发布商</span>' : publisher;
+      const displayVersion = version === 'Unknown' ? '<i class="fas fa-tag text-muted"></i> <span class="text-muted">未知版本</span>' : version;
+      
+      // 处理安装日期显示
+      let displayDate = app.installDate;
+      if (app.installDate === 'Unknown') {
+        displayDate = '<i class="fas fa-calendar-alt text-muted"></i> <span class="text-muted">未知日期</span>';
+      }
+      
+      // 处理大小显示
+      let displaySize = app.size;
+      if (app.size === 'Unknown') {
+        displaySize = '<i class="fas fa-weight-hanging text-muted"></i> <span class="text-muted">未知大小</span>';
+      }
       
       const tr = document.createElement('tr');
       tr.className = 'app-row';
@@ -1779,22 +1801,21 @@ function initUninstall() {
       // 添加可搜索的关键词属性
       tr.setAttribute('data-keywords', `${name} ${publisher} ${version}`.toLowerCase());
       
-      // 检查卸载字符串是否有效
+      // 获取卸载字符串
       let uninstallString = app.uninstallString || '';
-      let hasUninstallCmd = uninstallString.trim() !== '';
       
       // HTML转义卸载字符串，防止XSS攻击
       const escapedUninstallString = uninstallString.replace(/"/g, '&quot;');
       
       tr.innerHTML = `
         <td class="app-name">${name}</td>
-        <td class="app-publisher">${publisher}</td>
-        <td class="app-version">${version}</td>
-        <td class="app-date">${app.installDate}</td>
-        <td class="app-size">${app.size}</td>
+        <td class="app-publisher">${displayPublisher}</td>
+        <td class="app-version">${displayVersion}</td>
+        <td class="app-date">${displayDate}</td>
+        <td class="app-size">${displaySize}</td>
         <td class="app-action">
-          <button class="uninstall-btn" data-uninstall-string="${escapedUninstallString}" ${!hasUninstallCmd ? 'disabled' : ''} title="${!hasUninstallCmd ? '无卸载命令' : '卸载此程序'}">
-            ${hasUninstallCmd ? '卸载' : '<i class="fas fa-ban"></i>'}
+          <button class="uninstall-btn" data-uninstall-string="${escapedUninstallString}" title="卸载此程序">
+            卸载
           </button>
         </td>
       `;
@@ -1807,7 +1828,7 @@ function initUninstall() {
     appList.appendChild(tableContainer);
     
     // 绑定卸载按钮事件
-    document.querySelectorAll('.uninstall-btn:not([disabled])').forEach(btn => {
+    document.querySelectorAll('.uninstall-btn').forEach(btn => {
       btn.addEventListener('click', async function() {
         const uninstallString = this.getAttribute('data-uninstall-string').replace(/&quot;/g, '"');
         const appName = this.closest('tr').querySelector('.app-name').textContent;
@@ -2131,6 +2152,52 @@ function initUninstall() {
       
       .app-table tbody tr:hover {
         background-color: #f0f7ff;
+      }
+      
+      /* 优化Unknown替代显示 */
+      .text-muted {
+        color: #8a8a8a;
+        font-style: italic;
+        font-size: 0.9em;
+        transition: all 0.2s ease;
+      }
+      
+      .app-publisher .fas,
+      .app-version .fas,
+      .app-date .fas,
+      .app-size .fas {
+        margin-right: 5px;
+        color: #5f9ea0;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+      
+      .app-table td:hover .fas {
+        transform: scale(1.2);
+        color: #4682b4;
+      }
+      
+      .app-table tr:nth-child(odd) .fas {
+        color: #6a8caf;
+      }
+      
+      .app-table tr:nth-child(even) .fas {
+        color: #5f9ea0;
+      }
+      
+      .app-table tr:hover .text-muted {
+        color: #666;
+      }
+      
+      /* 图标加入动画效果 */
+      @keyframes softPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+      }
+      
+      .app-table tr:hover .fas {
+        animation: softPulse 1.5s infinite;
       }
       
       .smart-select-header {

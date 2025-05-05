@@ -594,6 +594,64 @@ body {
   background-color: white;
 }
 
+/* 添加新样式 - 美化Unknown替代显示 */
+.text-muted {
+  color: #8a8a8a;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+.app-publisher .fas,
+.app-version .fas,
+.app-date .fas,
+.app-size .fas {
+  margin-right: 5px;
+  color: #5f9ea0; /* 使用青绿色调 */
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.app-table td:hover .fas {
+  transform: scale(1.2);
+  color: #4682b4; /* 鼠标悬停时变为钢蓝色 */
+}
+
+/* 表格行中的图标样式 */
+.app-table tr:nth-child(odd) .fas {
+  color: #6a8caf; /* 奇数行使用不同色调 */
+}
+
+.app-table tr:nth-child(even) .fas {
+  color: #5f9ea0; /* 偶数行使用不同色调 */
+}
+
+/* 应用表格鼠标悬停效果优化 */
+.app-table tr:hover .text-muted {
+  color: #666;
+}
+
+/* 替代Unknown显示的文本悬停提示 */
+.text-muted {
+  position: relative;
+}
+
+.text-muted:hover::after {
+  content: "信息未知";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 10;
+  opacity: 0;
+  animation: fadeIn 0.3s forwards;
+}
+
 .app-list {
   max-height: 500px;
   overflow-y: auto;
