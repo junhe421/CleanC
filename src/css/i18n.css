@@ -1,0 +1,268 @@
+/* 国际化相关样式 */
+
+/* 语言切换器样式 */
+.language-switcher {
+  position: relative;
+  margin: 10px 15px;
+  border-top: 1px solid rgba(224, 224, 224, 0.3);
+  padding-top: 10px;
+}
+
+.language-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.language-btn:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.language-btn:active {
+  transform: translateY(0);
+}
+
+.language-btn i:first-child {
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+.language-btn i:last-child {
+  font-size: 10px;
+  transition: transform 0.3s ease;
+}
+
+.language-btn.active i:last-child {
+  transform: rotate(180deg);
+}
+
+/* 语言下拉菜单 */
+.language-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.language-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.language-option {
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f5f5f5;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #333;
+}
+
+.language-option:last-child {
+  border-bottom: none;
+}
+
+.language-option:hover {
+  background-color: #f8f9ff;
+  color: #667eea;
+}
+
+.language-option.active {
+  background-color: #667eea;
+  color: white;
+  font-weight: 500;
+}
+
+.language-option.active:hover {
+  background-color: #5a6fd8;
+  color: white;
+}
+
+/* 语言切换动画效果 */
+.language-switching {
+  opacity: 0.7;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .language-switcher {
+    margin: 8px 10px;
+  }
+  
+  .language-btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  
+  .language-option {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}
+
+/* 暗色主题支持 (为未来扩展准备) */
+@media (prefers-color-scheme: dark) {
+  .language-dropdown {
+    background: #2d2d2d;
+    border-color: #404040;
+  }
+  
+  .language-option {
+    color: #e0e0e0;
+    border-bottom-color: #404040;
+  }
+  
+  .language-option:hover {
+    background-color: #3d3d3d;
+    color: #8b9dff;
+  }
+  
+  .language-option.active {
+    background-color: #667eea;
+    color: white;
+  }
+}
+
+/* 国际化文本样式调整 */
+.i18n-text {
+  transition: opacity 0.2s ease;
+}
+
+.i18n-text.changing {
+  opacity: 0.5;
+}
+
+/* 语言特定的字体调整 */
+html[lang="en-US"] {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html[lang="zh-CN"] {
+  font-family: 'Microsoft YaHei', '微软雅黑', 'SimSun', '宋体', sans-serif;
+}
+
+/* 英文环境下的特殊样式调整 */
+html[lang="en-US"] .sidebar {
+  font-size: 13px;
+}
+
+html[lang="en-US"] .nav-item span {
+  font-size: 12px;
+}
+
+html[lang="en-US"] .content-tab h2 {
+  font-size: 20px;
+}
+
+html[lang="en-US"] .btn {
+  font-size: 13px;
+  padding: 8px 16px;
+}
+
+/* 中文环境下保持原有样式 */
+html[lang="zh-CN"] .sidebar {
+  font-size: 14px;
+}
+
+html[lang="zh-CN"] .nav-item span {
+  font-size: 13px;
+}
+
+html[lang="zh-CN"] .content-tab h2 {
+  font-size: 22px;
+}
+
+html[lang="zh-CN"] .btn {
+  font-size: 14px;
+  padding: 10px 20px;
+}
+
+/* 语言切换器在不同主题下的样式 */
+.app-container.light-theme .language-switcher {
+  border-top-color: rgba(224, 224, 224, 0.3);
+}
+
+.app-container.dark-theme .language-switcher {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 加载状态样式 */
+.language-loading::after {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: language-spin 1s ease-in-out infinite;
+  margin-left: 8px;
+}
+
+@keyframes language-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 工具提示样式 */
+.language-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 1001;
+}
+
+.language-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.8);
+}
+
+.language-btn:hover .language-tooltip {
+  opacity: 1;
+  visibility: visible;
+} 

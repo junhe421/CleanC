@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css">
   <!-- 引入应用自定义样式 -->
   <link rel="stylesheet" href="./src/css/style.css">
+  <!-- 引入国际化样式 -->
+  <link rel="stylesheet" href="./src/css/i18n.css">
   <!-- 优先样式，确保品牌和公众号区域正确显示 -->
   <style>
     .dashboard-footer {
@@ -167,36 +169,36 @@
       <ul class="nav-menu">
         <li class="nav-item active" data-tab="dashboard">
           <i class="fas fa-home"></i>
-          <span>主页</span>
+          <span data-i18n="nav.dashboard">主页</span>
         </li>
         <li class="nav-item" data-tab="quick-clean">
           <i class="fas fa-bolt"></i>
-          <span>快速清理</span>
+          <span data-i18n="nav.quickClean">快速清理</span>
         </li>
         <li class="nav-item" data-tab="large-files">
           <i class="fas fa-file-archive"></i>
-          <span>大文件查找</span>
+          <span data-i18n="nav.largeFiles">大文件查找</span>
         </li>
         <li class="nav-item" data-tab="duplicate-files">
           <i class="fas fa-copy"></i>
-          <span>重复文件</span>
+          <span data-i18n="nav.duplicateFiles">重复文件</span>
         </li>
         <li class="nav-item" data-tab="uninstall">
           <i class="fas fa-trash-alt"></i>
-          <span>程序卸载</span>
+          <span data-i18n="nav.uninstall">程序卸载</span>
         </li>
       </ul>
       <div class="sidebar-footer">
         <!-- 添加品牌logo -->
         <div class="sidebar-brand">
-          <div class="sidebar-brand-title">技术支持</div>
+          <div class="sidebar-brand-title" data-i18n="footer.technicalSupport">技术支持</div>
           <img src="./assets/next-wave-logo.png" alt="Next Wave" class="sidebar-logo" id="sidebar-brand-logo">
         </div>
         
         <!-- 添加公众号信息 -->
         <div class="sidebar-wechat" id="sidebar-wechat">
           <i class="fab fa-weixin"></i>
-          <span>查看公众号</span>
+          <span data-i18n="footer.wechatAccount">查看公众号</span>
         </div>
         
         <p style="margin: 5px 0;">为电脑小白设计</p>
@@ -209,7 +211,7 @@
       <!-- 仪表盘 -->
       <div class="content-tab active" id="dashboard">
         <div class="header">
-          <h2>欢迎使用 CleanC 清理工具</h2>
+          <h2 data-i18n="dashboard.title">欢迎使用 CleanC 清理工具</h2>
           <p>快速安全地清理您的C盘，释放宝贵空间</p>
         </div>
 
@@ -218,23 +220,23 @@
             <canvas id="diskChart"></canvas>
           </div>
           <div class="disk-details">
-            <h3>C盘使用情况</h3>
+            <h3 data-i18n="dashboard.diskUsage">C盘使用情况</h3>
             <div class="disk-stats">
               <div class="stat-item">
-                <span class="label">总容量</span>
-                <span class="value" id="total-space">计算中...</span>
+                <span class="label" data-i18n="dashboard.totalSpace">总容量</span>
+                <span class="value" id="total-space" data-i18n="common.loading">计算中...</span>
               </div>
               <div class="stat-item">
-                <span class="label">已用空间</span>
-                <span class="value" id="used-space">计算中...</span>
+                <span class="label" data-i18n="dashboard.usedSpace">已用空间</span>
+                <span class="value" id="used-space" data-i18n="common.loading">计算中...</span>
               </div>
               <div class="stat-item">
-                <span class="label">可用空间</span>
-                <span class="value" id="free-space">计算中...</span>
+                <span class="label" data-i18n="dashboard.freeSpace">可用空间</span>
+                <span class="value" id="free-space" data-i18n="common.loading">计算中...</span>
               </div>
             </div>
             <button class="scan-btn primary-btn" id="scan-system-btn">
-              <i class="fas fa-search"></i> 开始扫描系统
+              <i class="fas fa-search"></i> <span data-i18n="dashboard.scanSystemBtn">开始扫描系统</span>
             </button>
           </div>
         </div>
@@ -271,8 +273,8 @@
       <!-- 快速清理 -->
       <div class="content-tab" id="quick-clean">
         <div class="header">
-          <h2>快速清理</h2>
-          <p>一键清理系统垃圾文件，安全快速</p>
+          <h2 data-i18n="quickClean.title">快速清理</h2>
+          <p data-i18n="quickClean.description">一键清理系统垃圾文件，安全快速</p>
         </div>
 
         <div class="scan-results" id="quick-clean-results">
@@ -298,10 +300,10 @@
 
           <div class="action-buttons">
             <button class="secondary-btn" id="scan-again-btn">
-              <i class="fas fa-redo"></i> 重新扫描
+              <i class="fas fa-redo"></i> <span data-i18n="quickClean.scanAgainBtn">重新扫描</span>
             </button>
             <button class="primary-btn" id="clean-selected-btn">
-              <i class="fas fa-broom"></i> 清理所选项目
+              <i class="fas fa-broom"></i> <span data-i18n="quickClean.cleanSelectedBtn">清理所选项目</span>
             </button>
           </div>
         </div>
@@ -313,7 +315,7 @@
           <h3>点击下方按钮开始扫描</h3>
           <p>我们将安全地分析您的系统并找出可以清理的文件</p>
           <button class="primary-btn" id="start-quick-scan-btn">
-            <i class="fas fa-bolt"></i> 开始扫描
+            <i class="fas fa-bolt"></i> <span data-i18n="quickClean.startScanBtn">开始扫描</span>
           </button>
         </div>
 
@@ -322,7 +324,7 @@
           <div class="spinner">
             <i class="fas fa-circle-notch fa-spin"></i>
           </div>
-          <h3>正在扫描系统...</h3>
+          <h3 data-i18n="quickClean.scanning">正在扫描系统...</h3>
           <p>请稍候，这可能需要几分钟时间</p>
           <div class="progress-bar">
             <div class="progress" id="scan-progress"></div>
@@ -534,7 +536,20 @@
 
   <!-- JavaScript库 -->
   <script src="./node_modules/chart.js/dist/chart.umd.js"></script>
+  <!-- 国际化系统 -->
+  <script src="./src/js/i18n.js"></script>
   <!-- 应用脚本 -->
   <script src="./src/js/renderer.js"></script>
+  
+  <!-- 初始化国际化 -->
+  <script>
+    // 在DOM加载完成后初始化国际化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 稍微延迟初始化，确保所有元素都已加载
+      setTimeout(() => {
+        window.i18n.init();
+      }, 100);
+    });
+  </script>
 </body>
 </html> 

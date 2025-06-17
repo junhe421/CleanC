@@ -150,7 +150,10 @@ function createDiskChart(usedPercentage, freePercentage) {
   new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['已用空间', '可用空间'],
+      labels: [
+        window.i18n ? window.i18n.t('dashboard.usedSpaceLabel') : '已用空间',
+        window.i18n ? window.i18n.t('dashboard.freeSpaceLabel') : '可用空间'
+      ],
       datasets: [{
         data: [usedPercentage, freePercentage],
         backgroundColor: [
