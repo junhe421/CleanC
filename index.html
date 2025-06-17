@@ -202,7 +202,7 @@
         </div>
         
         <p style="margin: 5px 0;" data-i18n="footer.designedFor">为电脑小白设计</p>
-        <p style="margin: 5px 0;">版本 1.0.0</p>
+        <p style="margin: 5px 0;" data-i18n="footer.version">版本 1.0.0</p>
       </div>
     </div>
 
@@ -212,7 +212,7 @@
       <div class="content-tab active" id="dashboard">
         <div class="header">
           <h2 data-i18n="dashboard.title">欢迎使用 CleanC 清理工具</h2>
-          <p>快速安全地清理您的C盘，释放宝贵空间</p>
+                          <p data-i18n="dashboard.subtitle">快速安全地清理您的C盘，释放宝贵空间</p>
         </div>
 
         <div class="disk-info-card">
@@ -312,8 +312,8 @@
           <div class="placeholder-icon">
             <i class="fas fa-search"></i>
           </div>
-          <h3>点击下方按钮开始扫描</h3>
-          <p>我们将安全地分析您的系统并找出可以清理的文件</p>
+                          <h3 data-i18n="quickClean.scanTitle">点击下方按钮开始扫描</h3>
+                <p data-i18n="quickClean.scanDesc">我们将安全地分析您的系统并找出可以清理的文件</p>
           <button class="primary-btn" id="start-quick-scan-btn">
             <i class="fas fa-bolt"></i> <span data-i18n="quickClean.startScanBtn">开始扫描</span>
           </button>
@@ -357,7 +357,7 @@
         <div class="large-files-results" id="large-files-results">
           <div class="result-header">
             <h3 data-i18n="largeFiles.searchComplete">查找结果</h3>
-            <p>以下是占用空间最大的文件</p>
+            <p data-i18n="largeFiles.resultDesc">以下是占用空间最大的文件</p>
           </div>
           <div class="file-list-container">
             <table class="file-list">
@@ -381,7 +381,7 @@
             <i class="fas fa-file-archive"></i>
           </div>
           <h3 data-i18n="largeFiles.title">查找大文件</h3>
-          <p>点击上方按钮开始查找占用空间较大的文件</p>
+          <p data-i18n="largeFiles.placeholderDesc">点击上方按钮开始查找占用空间较大的文件</p>
         </div>
       </div>
 
@@ -478,7 +478,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <i class="fas fa-info-circle"></i>
-        <h3>关于 CleanC</h3>
+        <h3 data-i18n="about.title">关于 CleanC</h3>
         <div class="modal-controls">
           <span id="about-close-btn"><i class="fas fa-times"></i></span>
         </div>
@@ -490,20 +490,20 @@
               <i class="fas fa-broom"></i>
               <h2>CleanC</h2>
             </div>
-            <div class="app-version">版本 1.0.0</div>
+            <div class="app-version" data-i18n="about.version">版本 1.0.0</div>
             <div class="app-description">
-              <p>CleanC是一款专为电脑初学者设计的C盘清理与优化工具。它提供了比市面上同类产品更快速、
+              <p data-i18n="about.description">CleanC是一款专为电脑初学者设计的C盘清理与优化工具。它提供了比市面上同类产品更快速、
               界面更直观友好的体验，让用户能够安全、轻松地管理和释放C盘空间。</p>
             </div>
           </div>
           
           <div class="brand-section">
-            <div class="brand-title">技术提供</div>
+            <div class="brand-title" data-i18n="about.techProvider">技术提供</div>
             <div style="text-align: center; width: 100%; display: flex; justify-content: center; margin: 15px 0;">
               <img src="./assets/next-wave-logo.png" alt="Next Wave" class="next-wave-logo-lg">
             </div>
             <div class="brand-description">
-              <p>Next Wave 是一家专注于创新软件解决方案的技术公司，致力于打造简单易用、功能强大的应用程序。
+              <p data-i18n="about.companyDesc">Next Wave 是一家专注于创新软件解决方案的技术公司，致力于打造简单易用、功能强大的应用程序。
               我们相信科技应该让生活变得更简单，而不是更复杂。</p>
             </div>
           </div>
@@ -511,13 +511,13 @@
           <div class="wechat-section">
             <div class="wechat-title">
               <i class="fab fa-weixin"></i>
-              <h4>关注我们的公众号</h4>
+              <h4 data-i18n="about.followUs">关注我们的公众号</h4>
             </div>
             <div class="wechat-qrcode">
               <img src="./assets/qrcode-wechat.png" alt="公众号二维码" class="wechat-qrcode-img">
             </div>
             <div class="wechat-description">
-              <p>扫描二维码，获取更多系统优化技巧与软件更新</p>
+              <p data-i18n="about.qrDesc">扫描二维码，获取更多系统优化技巧与软件更新</p>
               <div class="social-icons">
                 <a href="#" class="wechat-icon" title="复制微信公众号">
                   <i class="fab fa-weixin"></i> Next Wave优化助手
@@ -527,7 +527,7 @@
           </div>
           
           <div class="about-footer">
-            <div class="copyright">© 2025 Next Wave. 保留所有权利。</div>
+            <div class="copyright" data-i18n="about.copyright">© 2025 Next Wave. 保留所有权利。</div>
           </div>
         </div>
       </div>

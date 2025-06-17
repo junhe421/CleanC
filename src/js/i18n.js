@@ -36,6 +36,7 @@ class I18n {
             // 主页面板
       dashboard: {
         title: '欢迎使用 CleanC 清理工具',
+        subtitle: '快速安全地清理您的C盘，释放宝贵空间',
         totalSpace: '总容量',
         usedSpace: '已用空间',
         freeSpace: '可用空间',
@@ -57,6 +58,8 @@ class I18n {
       quickClean: {
         title: '快速清理',
         description: '清理临时文件、缓存和其他垃圾文件以释放磁盘空间',
+        scanTitle: '点击下方按钮开始扫描',
+        scanDesc: '我们将安全地分析您的系统并找出可以清理的文件',
         startScanBtn: '开始扫描',
         scanAgainBtn: '重新扫描',
         cleanSelectedBtn: '清理所选项目',
@@ -87,6 +90,8 @@ class I18n {
         startSearchBtn: '查找大文件',
         searching: '正在搜索...',
         searchComplete: '查找结果',
+        resultDesc: '以下是占用空间最大的文件',
+        placeholderDesc: '点击上方按钮开始查找占用空间较大的文件',
         noFilesFound: '未找到符合条件的文件',
         fileName: '文件名',
         fileSize: '大小',
@@ -151,7 +156,18 @@ class I18n {
         uninstall: '卸载',
         uninstallConfirm: '确定要卸载这些程序吗？',
         uninstallSuccess: '程序卸载成功',
-        uninstallError: '程序卸载失败'
+        uninstallError: '程序卸载失败',
+        smartCategory: '智能程序分类',
+        filterRarelyUsed: '筛选不常用',
+        filterLargeApps: '筛选大型程序',
+        filterOldApps: '筛选旧程序',
+        clearFilters: '清除筛选',
+        showingPrograms: '显示',
+        totalPrograms: '个程序',
+        publisher: '发布商',
+        unknownPublisher: '未知发布商',
+        unknownDate: '未知日期',
+        unknownSize: '未知大小'
       },
       
       // 通用按钮和消息
@@ -170,7 +186,23 @@ class I18n {
         kb: 'KB',
         mb: 'MB',
         gb: 'GB',
-        tb: 'TB'
+        tb: 'TB',
+        // 错误和确认消息
+        scanError: '扫描过程中出现错误，请重试。',
+        cleanError: '清理过程中出现错误，请重试。',
+        selectAtLeastOne: '请至少选择一项需要清理的内容',
+        confirmClean: '确定要清理所选项目吗？这将永久删除这些文件。',
+        confirmDelete: '确定要删除此文件吗？',
+        operationCannotUndo: '此操作不可恢复！',
+        deleteSuccess: '文件已成功删除！',
+        deleteFailed: '删除文件失败',
+        openLocationFailed: '无法打开文件位置',
+        unknownError: '未知错误',
+        confirmUninstall: '确定要卸载',
+        uninstallStarted: '的卸载程序已启动，请按照卸载向导完成卸载。完成后请刷新列表。',
+        uninstallFailed: '卸载失败',
+        cannotUninstall: '抱歉，无法卸载',
+        noUninstallCommand: '未找到卸载命令。'
       },
       
       // 底部信息
@@ -178,7 +210,8 @@ class I18n {
         technicalSupport: '技术支持',
         wechatAccount: '查看公众号',
         aboutApp: '关于CleanC',
-        designedFor: '为电脑小白设计'
+        designedFor: '为电脑小白设计',
+        version: '版本 1.0.0'
       },
       
       // 语言切换
@@ -186,6 +219,18 @@ class I18n {
         switchLanguage: '切换语言',
         chinese: '中文',
         english: 'English'
+      },
+      
+      // 关于对话框
+      about: {
+        title: '关于 CleanC',
+        version: '版本 1.0.0',
+        description: 'CleanC是一款专为电脑初学者设计的C盘清理与优化工具。它提供了比市面上同类产品更快速、界面更直观友好的体验，让用户能够安全、轻松地管理和释放C盘空间。',
+        techProvider: '技术提供',
+        companyDesc: 'Next Wave 是一家专注于创新软件解决方案的技术公司，致力于打造简单易用、功能强大的应用程序。我们相信科技应该让生活变得更简单，而不是更复杂。',
+        followUs: '关注我们的公众号',
+        qrDesc: '扫描二维码，获取更多系统优化技巧与软件更新',
+        copyright: '© 2025 Next Wave. 保留所有权利。'
       }
     };
 
@@ -207,6 +252,7 @@ class I18n {
             // Dashboard panel
       dashboard: {
         title: 'Welcome to CleanC Disk Cleaner',
+        subtitle: 'Quickly and safely clean your C drive, free up precious space',
         totalSpace: 'Total Space',
         usedSpace: 'Used Space',
         freeSpace: 'Free Space',
@@ -228,6 +274,8 @@ class I18n {
       quickClean: {
         title: 'Quick Clean',
         description: 'Clean temporary files, caches, and other junk files to free up disk space',
+        scanTitle: 'Click the button below to start scanning',
+        scanDesc: 'We will safely analyze your system and find files that can be cleaned',
         startScanBtn: 'Start Scan',
         scanAgainBtn: 'Scan Again',
         cleanSelectedBtn: 'Clean Selected Items',
@@ -258,6 +306,8 @@ class I18n {
         startSearchBtn: 'Find Large Files',
         searching: 'Searching...',
         searchComplete: 'Search Results',
+        resultDesc: 'Here are the files that take up the most space',
+        placeholderDesc: 'Click the button above to start finding large files',
         noFilesFound: 'No files found matching criteria',
         fileName: 'File Name',
         fileSize: 'Size',
@@ -322,7 +372,18 @@ class I18n {
         uninstall: 'Uninstall',
         uninstallConfirm: 'Are you sure you want to uninstall these programs?',
         uninstallSuccess: 'Programs uninstalled successfully',
-        uninstallError: 'Failed to uninstall programs'
+        uninstallError: 'Failed to uninstall programs',
+        smartCategory: 'Smart Program Categories',
+        filterRarelyUsed: 'Filter Rarely Used',
+        filterLargeApps: 'Filter Large Programs',
+        filterOldApps: 'Filter Old Programs',
+        clearFilters: 'Clear Filters',
+        showingPrograms: 'Showing',
+        totalPrograms: 'programs',
+        publisher: 'Publisher',
+        unknownPublisher: 'Unknown Publisher',
+        unknownDate: 'Unknown Date',
+        unknownSize: 'Unknown Size'
       },
       
       // Common buttons and messages
@@ -341,7 +402,23 @@ class I18n {
         kb: 'KB',
         mb: 'MB',
         gb: 'GB',
-        tb: 'TB'
+        tb: 'TB',
+        // Error and confirmation messages
+        scanError: 'An error occurred during scanning, please try again.',
+        cleanError: 'An error occurred during cleaning, please try again.',
+        selectAtLeastOne: 'Please select at least one item to clean',
+        confirmClean: 'Are you sure you want to clean the selected items? This will permanently delete these files.',
+        confirmDelete: 'Are you sure you want to delete this file?',
+        operationCannotUndo: 'This operation cannot be undone!',
+        deleteSuccess: 'File deleted successfully!',
+        deleteFailed: 'Failed to delete file',
+        openLocationFailed: 'Cannot open file location',
+        unknownError: 'Unknown error',
+        confirmUninstall: 'Are you sure you want to uninstall',
+        uninstallStarted: ' uninstaller has been started. Please follow the uninstall wizard to complete the uninstallation. Please refresh the list after completion.',
+        uninstallFailed: 'Failed to uninstall',
+        cannotUninstall: 'Sorry, cannot uninstall',
+        noUninstallCommand: ', uninstall command not found.'
       },
       
       // Footer info
@@ -349,7 +426,8 @@ class I18n {
         technicalSupport: 'Technical Support',
         wechatAccount: 'WeChat Account',
         aboutApp: 'About CleanC',
-        designedFor: 'Designed for Beginners'
+        designedFor: 'Designed for Beginners',
+        version: 'Version 1.0.0'
       },
       
       // Language switching
@@ -357,6 +435,18 @@ class I18n {
         switchLanguage: 'Switch Language',
         chinese: '中文',
         english: 'English'
+      },
+      
+      // About dialog
+      about: {
+        title: 'About CleanC',
+        version: 'Version 1.0.0',
+        description: 'CleanC is a C drive cleaning and optimization tool designed specifically for computer beginners. It provides a faster and more intuitive user experience than similar products on the market, allowing users to safely and easily manage and free up C drive space.',
+        techProvider: 'Technology Provider',
+        companyDesc: 'Next Wave is a technology company focused on innovative software solutions, committed to creating simple, easy-to-use, and powerful applications. We believe technology should make life simpler, not more complex.',
+        followUs: 'Follow Our WeChat',
+        qrDesc: 'Scan the QR code to get more system optimization tips and software updates',
+        copyright: '© 2025 Next Wave. All rights reserved.'
       }
     };
   }
@@ -434,6 +524,77 @@ class I18n {
     titleElements.forEach(element => {
       const key = element.getAttribute('data-i18n-title');
       element.title = this.t(key);
+    });
+
+    // 如果程序卸载页面已经加载，重新渲染程序列表
+    if (document.querySelector('.smart-select-header')) {
+      this.refreshDynamicContent();
+    }
+  }
+
+  // 刷新动态生成的内容
+  refreshDynamicContent() {
+    // 更新智能程序分类头部
+    const smartHeader = document.querySelector('.smart-select-header');
+    if (smartHeader) {
+      const h3 = smartHeader.querySelector('h3');
+      if (h3) {
+        h3.textContent = this.t('uninstall.smartCategory');
+      }
+
+      // 更新按钮文本
+      const buttons = smartHeader.querySelectorAll('.smart-select-btn');
+      if (buttons.length >= 4) {
+        buttons[0].innerHTML = `<i class="fas fa-clock"></i> ${this.t('uninstall.filterRarelyUsed')}`;
+        buttons[1].innerHTML = `<i class="fas fa-database"></i> ${this.t('uninstall.filterLargeApps')}`;
+        buttons[2].innerHTML = `<i class="fas fa-history"></i> ${this.t('uninstall.filterOldApps')}`;
+        buttons[3].innerHTML = `<i class="fas fa-eraser"></i> ${this.t('uninstall.clearFilters')}`;
+      }
+
+      // 更新程序计数显示
+      const filteredCount = smartHeader.querySelector('.filtered-count');
+      if (filteredCount) {
+        const currentText = filteredCount.textContent;
+        const numbers = currentText.match(/\d+/g);
+        if (numbers && numbers.length >= 2) {
+          filteredCount.textContent = `${this.t('uninstall.showingPrograms')} ${numbers[0]}/${numbers[1]} ${this.t('uninstall.totalPrograms')}`;
+        }
+      }
+    }
+
+    // 更新表格头部
+    const tableHeader = document.querySelector('.app-table thead');
+    if (tableHeader) {
+      const ths = tableHeader.querySelectorAll('th');
+      if (ths.length >= 6) {
+        ths[0].textContent = this.t('uninstall.programName');
+        ths[1].textContent = this.t('uninstall.publisher');
+        ths[2].textContent = this.t('uninstall.version');
+        ths[3].textContent = this.t('uninstall.installDate');
+        ths[4].textContent = this.t('uninstall.size');
+        ths[5].textContent = this.t('uninstall.actions');
+      }
+    }
+
+    // 更新卸载按钮
+    const uninstallBtns = document.querySelectorAll('.uninstall-btn');
+    uninstallBtns.forEach(btn => {
+      if (btn.textContent.trim() === '卸载' || btn.textContent.trim() === 'Uninstall') {
+        btn.textContent = this.t('uninstall.uninstall');
+        btn.title = this.t('uninstall.uninstall');
+      }
+    });
+
+    // 更新未知信息的显示
+    const unknownElements = document.querySelectorAll('.app-table tbody td');
+    unknownElements.forEach(td => {
+      if (td.innerHTML.includes('未知发布商') || td.innerHTML.includes('Unknown Publisher')) {
+        td.innerHTML = `<i class="fas fa-building"></i> <span style="color:#888">${this.t('uninstall.unknownPublisher')}</span>`;
+      } else if (td.innerHTML.includes('未知日期') || td.innerHTML.includes('Unknown Date')) {
+        td.innerHTML = `<i class="fas fa-calendar"></i> <span style="color:#888">${this.t('uninstall.unknownDate')}</span>`;
+      } else if (td.innerHTML.includes('未知大小') || td.innerHTML.includes('Unknown Size')) {
+        td.innerHTML = `<i class="fas fa-weight"></i> <span style="color:#888">${this.t('uninstall.unknownSize')}</span>`;
+      }
     });
   }
 

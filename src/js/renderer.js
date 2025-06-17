@@ -1735,23 +1735,23 @@ function initUninstall() {
     const smartSelectHeader = document.createElement('div');
     smartSelectHeader.className = 'smart-select-header';
     smartSelectHeader.innerHTML = `
-      <h3>智能程序分类</h3>
+      <h3>${window.i18n.t('uninstall.smartCategory')}</h3>
       <div class="smart-select-buttons">
         <button id="select-rarely-used" class="smart-select-btn">
-          <i class="fas fa-clock"></i> 筛选不常用
+          <i class="fas fa-clock"></i> ${window.i18n.t('uninstall.filterRarelyUsed')}
         </button>
         <button id="select-large-apps" class="smart-select-btn">
-          <i class="fas fa-database"></i> 筛选大型程序
+          <i class="fas fa-database"></i> ${window.i18n.t('uninstall.filterLargeApps')}
         </button>
         <button id="select-old-apps" class="smart-select-btn">
-          <i class="fas fa-history"></i> 筛选旧程序
+          <i class="fas fa-history"></i> ${window.i18n.t('uninstall.filterOldApps')}
         </button>
         <button id="clear-filters" class="smart-select-btn">
-          <i class="fas fa-eraser"></i> 清除筛选
+          <i class="fas fa-eraser"></i> ${window.i18n.t('uninstall.clearFilters')}
         </button>
         </div>
       <div class="filtered-count">
-        显示 ${installableApps.length}/${installableApps.length} 个程序
+        ${window.i18n.t('uninstall.showingPrograms')} ${installableApps.length}/${installableApps.length} ${window.i18n.t('uninstall.totalPrograms')}
       </div>
     `;
     appList.appendChild(smartSelectHeader);
@@ -1768,12 +1768,12 @@ function initUninstall() {
     const thead = document.createElement('thead');
     thead.innerHTML = `
       <tr>
-        <th class="th-name">程序名称</th>
-        <th class="th-publisher">发布商</th>
-        <th class="th-version">版本</th>
-        <th class="th-date">安装日期</th>
-        <th class="th-size">大小</th>
-        <th class="th-action">操作</th>
+        <th class="th-name">${window.i18n.t('uninstall.programName')}</th>
+        <th class="th-publisher">${window.i18n.t('uninstall.publisher')}</th>
+        <th class="th-version">${window.i18n.t('uninstall.version')}</th>
+        <th class="th-date">${window.i18n.t('uninstall.installDate')}</th>
+        <th class="th-size">${window.i18n.t('uninstall.size')}</th>
+        <th class="th-action">${window.i18n.t('uninstall.actions')}</th>
       </tr>
     `;
     table.appendChild(thead);
@@ -1835,18 +1835,18 @@ function initUninstall() {
       let publisherDisplay = publisher;
       if (publisher === '<i class="fas fa-cube"></i> <span style="color:#888">未知应用</span>' || 
           !publisher || publisher === 'Unknown') {
-        publisherDisplay = '<i class="fas fa-building"></i> <span style="color:#888">未知发布商</span>';
+        publisherDisplay = `<i class="fas fa-building"></i> <span style="color:#888">${window.i18n.t('uninstall.unknownPublisher')}</span>`;
       }
       
       // 对日期和大小做同样处理
       let dateDisplay = app.installDate;
       if (dateDisplay === 'Unknown' || !dateDisplay) {
-        dateDisplay = '<i class="fas fa-calendar"></i> <span style="color:#888">未知日期</span>';
+        dateDisplay = `<i class="fas fa-calendar"></i> <span style="color:#888">${window.i18n.t('uninstall.unknownDate')}</span>`;
       }
       
       let sizeDisplay = app.size;
       if (sizeDisplay === 'Unknown' || !sizeDisplay || sizeDisplay === '0 Bytes') {
-        sizeDisplay = '<i class="fas fa-weight"></i> <span style="color:#888">未知大小</span>';
+        sizeDisplay = `<i class="fas fa-weight"></i> <span style="color:#888">${window.i18n.t('uninstall.unknownSize')}</span>`;
       }
       
       tr.innerHTML = `
@@ -1856,8 +1856,8 @@ function initUninstall() {
         <td class="app-date">${dateDisplay}</td>
         <td class="app-size">${sizeDisplay}</td>
         <td class="app-action">
-          <button class="uninstall-btn" data-uninstall-string="${escapedUninstallString}" title="卸载此程序">
-            卸载
+          <button class="uninstall-btn" data-uninstall-string="${escapedUninstallString}" title="${window.i18n.t('uninstall.uninstall')}">
+            ${window.i18n.t('uninstall.uninstall')}
           </button>
         </td>
       `;
