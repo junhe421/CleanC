@@ -1,77 +1,193 @@
-# CleanC - 电脑小白的C盘清理工具
+# CleanC - Ultimate C Drive Cleaner for Beginners
+
+<div align="center">
 
 ![CleanC Logo](assets/icon.svg)
 
-CleanC是一款专为电脑初学者设计的Windows系统清理工具，主要功能是帮助用户轻松清理C盘空间。
+**A Simple & Safe Windows System Cleaner Designed for Non-Technical Users**
 
-## 功能特点
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Platform](https://img.shields.io/badge/Platform-Windows-blue.svg)](https://github.com/junhe421/CleanC)
+[![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)](https://github.com/junhe421/CleanC)
+[![Electron](https://img.shields.io/badge/Electron-28+-green.svg)](https://www.electronjs.org/)
 
-- **简单易用**：无需专业知识，一键操作即可清理电脑
-- **安全可靠**：智能识别系统文件，避免误删重要内容
-- **直观界面**：清晰展示磁盘使用情况和可清理内容
-- **优化性能**：清理临时文件和缓存，让电脑运行更流畅
-- **小白友好**：专为没有计算机专业知识的用户设计
+[中文版本](README_CN.md) | [Features](#features) | [Installation](#installation) | [Usage](#usage) | [Contributing](#contributing)
 
-## 主要功能
+</div>
 
-1. **智能扫描**：自动扫描C盘并分析空间占用情况
-2. **一键清理**：轻松清理临时文件、缓存和下载内容
-3. **应用管理**：查看并卸载不常用的应用程序
-4. **系统优化**：简单的系统优化功能，提升电脑性能
-5. **备份提醒**：智能提醒用户备份重要数据
+## Overview
 
-## 安装使用
+CleanC is a beginner-friendly Windows system cleaner specifically designed for users with no technical background. It provides a faster, more intuitive experience than other similar products available in the market, allowing users to safely and easily manage and free up C drive space.
 
-1. 下载最新版安装程序（CleanC_安装程序.bat）
-2. 双击运行安装程序
-3. 按照向导完成安装
-4. 通过桌面快捷方式启动CleanC
+**Powered by Next Wave Technology**
 
-## 系统要求
+![CleanC Screenshot](assets/screenshot.svg)
 
-- Windows 10/11 操作系统
-- 4GB以上内存
-- 100MB可用硬盘空间
-- 管理员权限（用于执行系统清理操作）
+## Features
 
-## 开发说明
+### 🔍 Smart Scanning & Safety Classification
+- **High-speed scanning engine** for rapid C drive analysis
+- **Clear graphical interface** displaying scan results
+- **Automatic safety level classification** ("Safe to Clean", "Recommended to Keep", "System Critical Files")
+- **Plain language explanations** to prevent accidental operations
 
-CleanC基于Electron框架开发，使用HTML/CSS/JavaScript构建用户界面。
+### ⚡ One-Click Quick Cleanup
+- **Prominent and simple** "One-Click Clean" button
+- **Default selection** of only files marked as "Safe to Clean"
+- **Lightning-fast response** and space liberation
 
-### 开发环境设置
+### 🛠️ C Drive Management Assistant
+- **Large File Finder**: Lists files that consume the most space for user review
+- **Duplicate File Finder**: Identifies identical files with simple cleanup options
+- **Easy Program Uninstaller**: More thorough and clear than system built-in uninstaller
+- **Startup Accelerator**: Simple toggle switches to manage startup programs and speed up boot time
+
+## Technical Highlights
+
+- **Electron Framework**: Ensures high performance and cross-platform compatibility
+- **Optimized File Scanning Algorithm**: Provides best-in-class performance
+- **Clean and Intuitive UI**: Specifically designed for non-technical users
+- **Built-in Safety Mechanisms**: Prevents accidental deletion of important files
+
+## Installation
+
+### System Requirements
+- Windows 10/11 (64-bit)
+- Minimum RAM: 4GB
+- Disk Space: 100MB free space
+- Administrator privileges (for system cleaning operations)
+
+### Quick Start
+1. Download the latest CleanC installer from [Releases](https://github.com/junhe421/CleanC/releases)
+2. Double-click the installer to run the setup program
+3. Follow the on-screen instructions to complete installation
+4. Launch CleanC from the desktop shortcut
+
+## Usage
+
+### Quick Start Guide
+1. Launch the CleanC application
+2. Main interface displays current C drive usage
+3. Click "Start System Scan" to perform full disk scan
+4. After scanning, select items you want to clean
+5. Click "Clean Selected Items" to begin cleanup
+
+### Advanced Features
+- **Find Large Files**: Select "Large File Finder" from left menu, set minimum file size and click search
+- **Find Duplicate Files**: Select "Duplicate Files" from left menu, choose directories to scan and click search
+- **Manage Startup Programs**: Select "Startup Accelerator" from left menu, use toggle switches to control application auto-start
+
+## Development
+
+### Development Environment
+- Node.js 18+
+- Electron 28+
+- Windows development environment
+
+### Getting Started
 
 ```bash
-# 克隆项目
-git clone https://github.com/yourusername/cleanc.git
+# Clone the repository
+git clone https://github.com/junhe421/CleanC.git
+cd CleanC
 
-# 安装依赖
+# Install dependencies
 npm install
 
-# 运行开发版本
+# Start development version
 npm start
 
-# 打包应用
-npm run package-secure
+# Build production version
+npm run build
+
+# Create installer
+npm run build:installer
 ```
 
-## 微信公众号
+### Project Structure
 
-关注我们的微信公众号，获取更多电脑使用技巧和CleanC更新信息：
+```
+CleanC/
+├── src/                    # Source code
+│   ├── js/                # JavaScript modules
+│   └── css/               # Stylesheets
+├── assets/                # Application assets
+├── tests/                 # Test suites
+├── docs/                  # Documentation
+├── main.js               # Electron main process
+├── index.html            # Main application window
+└── package.json          # Project configuration
+```
 
-![微信公众号](assets/qrcode-wechat.png)
+### Testing
 
-## 许可证
+```bash
+# Run all tests
+npm test
 
-本软件遵循MIT许可证开源。
+# Run specific test suites
+npm run test:main         # Main process tests
+npm run test:renderer     # Renderer process tests
+npm run test:e2e          # End-to-end tests
+```
 
-## 联系我们
+## About Next Wave
 
-如有任何问题或建议，请通过以下方式联系我们：
+Next Wave is a technology company focused on innovative software solutions, committed to creating applications that are both simple to use and powerful. We believe technology should make life simpler, not more complicated.
 
-- 微信公众号：CleanC小助手
-- 电子邮件：support@example.com
-- 项目主页：https://github.com/yourusername/cleanc
+Through tools like CleanC, we hope to help users who aren't very familiar with computers to easily manage their devices and enjoy a smooth user experience.
+
+## Version History
+
+### Version 1.0.0 (Current)
+- Initial release
+- Basic C drive cleaning functionality
+- Large file finder support
+- Program uninstall management
+- Startup program management
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## Privacy Policy
+
+CleanC respects user privacy and does not collect any personal data. All scanning and cleaning operations are performed locally and no files or usage data are uploaded to external servers.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+If you have any questions or suggestions, please contact us through:
+
+- **QQ Group**: 960598442
+- **Email**: junhe421@gmail.com
+- **Project Homepage**: https://github.com/junhe421/CleanC
+
+## WeChat Official Account
+
+Follow our WeChat official account for more computer tips and CleanC updates:
+
+<div align="center">
+
+![WeChat QR Code](assets/qrcode-wechat.png)
+
+</div>
 
 ---
 
-**CleanC** - 让电脑清理变得简单 © 2023 NextWave 
+<div align="center">
+
+**CleanC** - Making Computer Cleanup Simple © 2025 Next Wave
+
+⭐ If you find this project helpful, please give it a star!
+
+</div> 
