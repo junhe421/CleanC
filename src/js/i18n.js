@@ -33,18 +33,25 @@ class I18n {
         uninstall: '程序卸载'
       },
       
-      // 主页面板
-              dashboard: {
-          title: '欢迎使用 CleanC 清理工具',
-          totalSpace: '总容量',
-          usedSpace: '已用空间',
-          freeSpace: '可用空间',
-          scanSystemBtn: '开始扫描系统',
-          systemStatus: '系统状态',
-          diskUsage: 'C盘使用情况',
-          usedSpaceLabel: '已用空间',
-          freeSpaceLabel: '可用空间'
-        },
+            // 主页面板
+      dashboard: {
+        title: '欢迎使用 CleanC 清理工具',
+        totalSpace: '总容量',
+        usedSpace: '已用空间',
+        freeSpace: '可用空间',
+        scanSystemBtn: '开始扫描系统',
+        systemStatus: '系统状态',
+        diskUsage: 'C盘使用情况',
+        usedSpaceLabel: '已用空间',
+        freeSpaceLabel: '可用空间',
+        quickTips: '快速小贴士',
+        tip1Title: '定期清理临时文件',
+        tip1Content: '临时文件会占用大量空间，建议每周清理一次',
+        tip2Title: '注意备份重要文件',
+        tip2Content: '清理前请确保重要文件已备份',
+        tip3Title: '卸载不用的程序',
+        tip3Content: '卸载长期不用的程序可以释放更多空间'
+      },
       
       // 快速清理
       quickClean: {
@@ -62,6 +69,7 @@ class I18n {
         totalSize: '总大小',
         cleanupComplete: '清理完成',
         freedSpace: '已释放空间',
+        cleanupItems: '清理项目',
         itemTypes: {
           tempFiles: '临时文件',
           browserCache: '浏览器缓存',
@@ -76,13 +84,13 @@ class I18n {
         title: '大文件查找',
         description: '查找占用大量磁盘空间的文件',
         minSizeLabel: '最小文件大小 (MB)',
-        startSearchBtn: '开始搜索',
+        startSearchBtn: '查找大文件',
         searching: '正在搜索...',
-        searchComplete: '搜索完成',
+        searchComplete: '查找结果',
         noFilesFound: '未找到符合条件的文件',
         fileName: '文件名',
-        fileSize: '文件大小',
-        filePath: '文件路径',
+        fileSize: '大小',
+        filePath: '位置',
         lastModified: '修改时间',
         actions: '操作',
         openLocation: '打开位置',
@@ -97,7 +105,7 @@ class I18n {
         title: '重复文件查找',
         description: '查找并删除重复的文件以节省空间',
         selectFolderBtn: '选择文件夹',
-        startSearchBtn: '开始搜索',
+        startSearchBtn: '查找重复文件',
         searching: '正在搜索重复文件...',
         searchComplete: '搜索完成',
         noDuplicatesFound: '未找到重复文件',
@@ -110,7 +118,16 @@ class I18n {
         actions: '操作',
         keepThis: '保留此文件',
         deleteThis: '删除此文件',
-        openLocation: '打开位置'
+        openLocation: '打开位置',
+        folderDocuments: '我的文档',
+        folderDownloads: '下载',
+        folderPictures: '图片',
+        folderVideos: '视频',
+        folderMusic: '音乐',
+        folderCustom: '自定义...',
+        customPathPlaceholder: '输入自定义路径...',
+        searchPath: '搜索路径:',
+        placeholderDesc: '选择要扫描的文件夹，然后点击上方按钮开始查找'
       },
       
       // 程序卸载
@@ -160,7 +177,8 @@ class I18n {
       footer: {
         technicalSupport: '技术支持',
         wechatAccount: '查看公众号',
-        aboutApp: '关于应用'
+        aboutApp: '关于CleanC',
+        designedFor: '为电脑小白设计'
       },
       
       // 语言切换
@@ -186,18 +204,25 @@ class I18n {
         uninstall: 'Uninstall Programs'
       },
       
-      // Dashboard panel
-              dashboard: {
-          title: 'Welcome to CleanC Disk Cleaner',
-          totalSpace: 'Total Space',
-          usedSpace: 'Used Space',
-          freeSpace: 'Free Space',
-          scanSystemBtn: 'Start System Scan',
-          systemStatus: 'System Status',
-          diskUsage: 'C Drive Usage',
-          usedSpaceLabel: 'Used Space',
-          freeSpaceLabel: 'Free Space'
-        },
+            // Dashboard panel
+      dashboard: {
+        title: 'Welcome to CleanC Disk Cleaner',
+        totalSpace: 'Total Space',
+        usedSpace: 'Used Space',
+        freeSpace: 'Free Space',
+        scanSystemBtn: 'Start System Scan',
+        systemStatus: 'System Status',
+        diskUsage: 'C Drive Usage',
+        usedSpaceLabel: 'Used Space',
+        freeSpaceLabel: 'Free Space',
+        quickTips: 'Quick Tips',
+        tip1Title: 'Clean Temporary Files Regularly',
+        tip1Content: 'Temporary files can take up a lot of space, recommend cleaning weekly',
+        tip2Title: 'Backup Important Files',
+        tip2Content: 'Please ensure important files are backed up before cleaning',
+        tip3Title: 'Uninstall Unused Programs',
+        tip3Content: 'Uninstalling programs you no longer use can free up more space'
+      },
       
       // Quick clean
       quickClean: {
@@ -215,6 +240,7 @@ class I18n {
         totalSize: 'Total Size',
         cleanupComplete: 'Cleanup Complete',
         freedSpace: 'Space Freed',
+        cleanupItems: 'Cleanup Items',
         itemTypes: {
           tempFiles: 'Temporary Files',
           browserCache: 'Browser Cache',
@@ -229,13 +255,13 @@ class I18n {
         title: 'Large Files Finder',
         description: 'Find files that consume large amounts of disk space',
         minSizeLabel: 'Minimum File Size (MB)',
-        startSearchBtn: 'Start Search',
+        startSearchBtn: 'Find Large Files',
         searching: 'Searching...',
-        searchComplete: 'Search Complete',
+        searchComplete: 'Search Results',
         noFilesFound: 'No files found matching criteria',
         fileName: 'File Name',
-        fileSize: 'File Size',
-        filePath: 'File Path',
+        fileSize: 'Size',
+        filePath: 'Location',
         lastModified: 'Last Modified',
         actions: 'Actions',
         openLocation: 'Open Location',
@@ -250,7 +276,7 @@ class I18n {
         title: 'Duplicate Files Finder',
         description: 'Find and remove duplicate files to save space',
         selectFolderBtn: 'Select Folder',
-        startSearchBtn: 'Start Search',
+        startSearchBtn: 'Find Duplicate Files',
         searching: 'Searching for duplicate files...',
         searchComplete: 'Search Complete',
         noDuplicatesFound: 'No duplicate files found',
@@ -263,7 +289,16 @@ class I18n {
         actions: 'Actions',
         keepThis: 'Keep This File',
         deleteThis: 'Delete This File',
-        openLocation: 'Open Location'
+        openLocation: 'Open Location',
+        folderDocuments: 'Documents',
+        folderDownloads: 'Downloads',
+        folderPictures: 'Pictures',
+        folderVideos: 'Videos',
+        folderMusic: 'Music',
+        folderCustom: 'Custom...',
+        customPathPlaceholder: 'Enter custom path...',
+        searchPath: 'Search Path:',
+        placeholderDesc: 'Select the folder to scan, then click the button above to start searching'
       },
       
       // Program uninstall
@@ -313,7 +348,8 @@ class I18n {
       footer: {
         technicalSupport: 'Technical Support',
         wechatAccount: 'WeChat Account',
-        aboutApp: 'About App'
+        aboutApp: 'About CleanC',
+        designedFor: 'Designed for Beginners'
       },
       
       // Language switching

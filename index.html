@@ -201,7 +201,7 @@
           <span data-i18n="footer.wechatAccount">查看公众号</span>
         </div>
         
-        <p style="margin: 5px 0;">为电脑小白设计</p>
+        <p style="margin: 5px 0;" data-i18n="footer.designedFor">为电脑小白设计</p>
         <p style="margin: 5px 0;">版本 1.0.0</p>
       </div>
     </div>
@@ -242,22 +242,22 @@
         </div>
 
         <div class="quick-tips">
-          <h3>快速小贴士</h3>
+          <h3 data-i18n="dashboard.quickTips">快速小贴士</h3>
           <div class="tips-container">
             <div class="tip-card">
               <i class="fas fa-lightbulb"></i>
-              <h4>定期清理临时文件</h4>
-              <p>临时文件会占用大量空间，建议每周清理一次</p>
+              <h4 data-i18n="dashboard.tip1Title">定期清理临时文件</h4>
+              <p data-i18n="dashboard.tip1Content">临时文件会占用大量空间，建议每周清理一次</p>
             </div>
             <div class="tip-card">
               <i class="fas fa-exclamation-circle"></i>
-              <h4>注意备份重要文件</h4>
-              <p>清理前请确保重要文件已备份</p>
+              <h4 data-i18n="dashboard.tip2Title">注意备份重要文件</h4>
+              <p data-i18n="dashboard.tip2Content">清理前请确保重要文件已备份</p>
             </div>
             <div class="tip-card">
               <i class="fas fa-star"></i>
-              <h4>卸载不用的程序</h4>
-              <p>卸载长期不用的程序可以释放更多空间</p>
+              <h4 data-i18n="dashboard.tip3Title">卸载不用的程序</h4>
+              <p data-i18n="dashboard.tip3Content">卸载长期不用的程序可以释放更多空间</p>
             </div>
           </div>
         </div>
@@ -265,7 +265,7 @@
         <!-- 添加"关于CleanC"按钮 -->
         <div class="dashboard-about-btn-container">
           <button class="about-btn" id="show-about-btn">
-            <i class="fas fa-info-circle"></i> 关于CleanC
+            <i class="fas fa-info-circle"></i> <span data-i18n="footer.aboutApp">关于CleanC</span>
           </button>
         </div>
       </div>
@@ -292,7 +292,7 @@
           </div>
 
           <div class="cleanup-items">
-            <h3>清理项目</h3>
+            <h3 data-i18n="quickClean.cleanupItems">清理项目</h3>
             <div class="item-list" id="cleanup-item-list">
               <!-- 清理项列表将动态生成 -->
             </div>
@@ -335,13 +335,13 @@
       <!-- 大文件查找 -->
       <div class="content-tab" id="large-files">
         <div class="header">
-          <h2>大文件查找</h2>
-          <p>找出占用空间最大的文件，合理管理您的磁盘空间</p>
+          <h2 data-i18n="largeFiles.title">大文件查找</h2>
+          <p data-i18n="largeFiles.description">找出占用空间最大的文件，合理管理您的磁盘空间</p>
         </div>
 
         <div class="search-controls">
           <div class="size-filter">
-            <label for="min-file-size">最小文件大小:</label>
+            <label for="min-file-size" data-i18n="largeFiles.minSizeLabel">最小文件大小:</label>
             <select id="min-file-size">
               <option value="50">50 MB</option>
               <option value="100" selected>100 MB</option>
@@ -350,23 +350,23 @@
             </select>
           </div>
           <button class="primary-btn" id="find-large-files-btn">
-            <i class="fas fa-search"></i> 查找大文件
+            <i class="fas fa-search"></i> <span data-i18n="largeFiles.startSearchBtn">查找大文件</span>
           </button>
         </div>
 
         <div class="large-files-results" id="large-files-results">
           <div class="result-header">
-            <h3>查找结果</h3>
+            <h3 data-i18n="largeFiles.searchComplete">查找结果</h3>
             <p>以下是占用空间最大的文件</p>
           </div>
           <div class="file-list-container">
             <table class="file-list">
               <thead>
                 <tr>
-                  <th>文件名</th>
-                  <th>大小</th>
-                  <th>位置</th>
-                  <th>操作</th>
+                  <th data-i18n="largeFiles.fileName">文件名</th>
+                  <th data-i18n="largeFiles.fileSize">大小</th>
+                  <th data-i18n="largeFiles.filePath">位置</th>
+                  <th data-i18n="largeFiles.actions">操作</th>
                 </tr>
               </thead>
               <tbody id="large-files-tbody">
@@ -380,7 +380,7 @@
           <div class="placeholder-icon">
             <i class="fas fa-file-archive"></i>
           </div>
-          <h3>查找大文件</h3>
+          <h3 data-i18n="largeFiles.title">查找大文件</h3>
           <p>点击上方按钮开始查找占用空间较大的文件</p>
         </div>
       </div>
@@ -388,25 +388,25 @@
       <!-- 重复文件 -->
       <div class="content-tab" id="duplicate-files">
         <div class="header">
-          <h2>重复文件查找</h2>
-          <p>查找并删除内容完全相同的重复文件</p>
+          <h2 data-i18n="duplicateFiles.title">重复文件查找</h2>
+          <p data-i18n="duplicateFiles.description">查找并删除内容完全相同的重复文件</p>
         </div>
 
         <div class="duplicate-search-controls">
           <div class="path-selection">
-            <label for="search-path">搜索路径:</label>
+            <label for="search-path" data-i18n="duplicateFiles.searchPath">搜索路径:</label>
             <select id="search-path">
-              <option value="documents">我的文档</option>
-              <option value="downloads">下载</option>
-              <option value="pictures">图片</option>
-              <option value="videos">视频</option>
-              <option value="music">音乐</option>
-              <option value="custom">自定义...</option>
+              <option value="documents" data-i18n="duplicateFiles.folderDocuments">我的文档</option>
+              <option value="downloads" data-i18n="duplicateFiles.folderDownloads">下载</option>
+              <option value="pictures" data-i18n="duplicateFiles.folderPictures">图片</option>
+              <option value="videos" data-i18n="duplicateFiles.folderVideos">视频</option>
+              <option value="music" data-i18n="duplicateFiles.folderMusic">音乐</option>
+              <option value="custom" data-i18n="duplicateFiles.folderCustom">自定义...</option>
             </select>
-            <input type="text" id="custom-path" placeholder="输入自定义路径...">
+            <input type="text" id="custom-path" data-i18n-placeholder="duplicateFiles.customPathPlaceholder" placeholder="输入自定义路径...">
           </div>
           <button class="primary-btn" id="find-duplicates-btn">
-            <i class="fas fa-search"></i> 查找重复文件
+            <i class="fas fa-search"></i> <span data-i18n="duplicateFiles.startSearchBtn">查找重复文件</span>
           </button>
         </div>
 
@@ -418,25 +418,25 @@
           <div class="placeholder-icon">
             <i class="fas fa-copy"></i>
           </div>
-          <h3>查找重复文件</h3>
-          <p>选择要扫描的文件夹，然后点击上方按钮开始查找</p>
+          <h3 data-i18n="duplicateFiles.title">查找重复文件</h3>
+          <p data-i18n="duplicateFiles.placeholderDesc">选择要扫描的文件夹，然后点击上方按钮开始查找</p>
         </div>
       </div>
 
       <!-- 程序卸载 -->
       <div class="content-tab" id="uninstall">
         <div class="header">
-          <h2>程序轻松卸载</h2>
-          <p>卸载不需要的程序，释放更多空间</p>
+          <h2 data-i18n="uninstall.title">程序轻松卸载</h2>
+          <p data-i18n="uninstall.description">卸载不需要的程序，释放更多空间</p>
         </div>
 
         <div class="app-list-container">
           <div class="app-filter">
-            <input type="text" id="app-search" placeholder="搜索程序...">
-            <select id="app-sort" title="排序方式">
-              <option value="name">按名称排序</option>
-              <option value="size">按大小排序</option>
-              <option value="date">按安装日期排序</option>
+            <input type="text" id="app-search" data-i18n-placeholder="uninstall.searchPlaceholder" placeholder="搜索程序...">
+            <select id="app-sort" data-i18n-title="uninstall.sortBy" title="排序方式">
+              <option value="name" data-i18n="uninstall.sortByName">按名称排序</option>
+              <option value="size" data-i18n="uninstall.sortBySize">按大小排序</option>
+              <option value="date" data-i18n="uninstall.sortByDate">按安装日期排序</option>
             </select>
           </div>
 
@@ -444,7 +444,7 @@
             <!-- 已安装程序列表将动态生成 -->
             <div class="loading-apps">
               <i class="fas fa-circle-notch fa-spin"></i>
-              <p>正在加载已安装程序...</p>
+              <p data-i18n="uninstall.loading">正在加载已安装程序...</p>
             </div>
           </div>
         </div>
@@ -457,7 +457,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <i class="fas fa-check-circle"></i>
-        <h3>清理完成！</h3>
+        <h3 data-i18n="quickClean.cleanupComplete">清理完成！</h3>
       </div>
       <div class="modal-body">
         <p>已成功清理 <span id="freed-space">0 MB</span> 的磁盘空间。</p>
@@ -467,7 +467,7 @@
       </div>
       <div class="modal-footer">
         <button class="primary-btn" id="modal-close-btn">
-          <i class="fas fa-check"></i> 确定
+          <i class="fas fa-check"></i> <span data-i18n="common.ok">确定</span>
         </button>
       </div>
     </div>
