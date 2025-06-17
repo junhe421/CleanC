@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- 背景圆形 -->
+  <circle cx="256" cy="256" r="256" fill="#2196F3"/>
+  
+  <!-- 内部圆环 -->
+  <circle cx="256" cy="256" r="220" fill="#1976D2"/>
+  <circle cx="256" cy="256" r="180" fill="#FFFFFF"/>
+  
+  <!-- 磁盘/C盘图形 -->
+  <g transform="translate(145, 160)">
+    <!-- 磁盘外壳 -->
+    <rect x="0" y="0" width="220" height="180" rx="15" ry="15" fill="#E0E0E0"/>
+    <rect x="10" y="10" width="200" height="160" rx="10" ry="10" fill="#F5F5F5"/>
+    
+    <!-- 磁盘标签 -->
+    <rect x="30" y="30" width="160" height="120" rx="5" ry="5" fill="#2196F3"/>
+    
+    <!-- C盘文字 -->
+    <text x="110" y="105" font-family="Arial, sans-serif" font-size="80" font-weight="bold" text-anchor="middle" fill="#FFFFFF">C</text>
+  </g>
+  
+  <!-- 清理的扫帚图标 -->
+  <g transform="translate(340, 140) rotate(30)">
+    <rect x="0" y="0" width="20" height="150" rx="5" ry="5" fill="#795548"/>
+    <path d="M0,0 L80,0 L60,80 L-20,80 Z" fill="#8D6E63"/>
+    <g transform="translate(-20, 80)">
+      <rect x="0" y="0" width="80" height="10" fill="#5D4037"/>
+      <rect x="5" y="10" width="3" height="40" fill="#FFD54F" rx="1" ry="1"/>
+      <rect x="15" y="10" width="3" height="50" fill="#FFD54F" rx="1" ry="1"/>
+      <rect x="25" y="10" width="3" height="45" fill="#FFD54F" rx="1" ry="1"/>
+      <rect x="35" y="10" width="3" height="55" fill="#FFD54F" rx="1" ry="1"/>
+      <rect x="45" y="10" width="3" height="50" fill="#FFD54F" rx="1" ry="1"/>
+      <rect x="55" y="10" width="3" height="45" fill="#FFD54F" rx="1" ry="1"/>
+      <rect x="65" y="10" width="3" height="40" fill="#FFD54F" rx="1" ry="1"/>
+      <rect x="75" y="10" width="3" height="35" fill="#FFD54F" rx="1" ry="1"/>
+    </g>
+  </g>
+  
+  <!-- 闪电图标 -->
+  <path d="M200,130 L240,130 L220,190 L260,190 L180,320 L200,220 L160,220 Z" fill="#FFEB3B" stroke="#FBC02D" stroke-width="5"/>
+</svg> 

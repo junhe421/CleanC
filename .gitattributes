@@ -1,0 +1,43 @@
+# 自动检测文本文件并执行LF规范化
+* text=auto
+
+# 源代码文件使用LF
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+
+# 批处理文件保持CRLF换行符
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 二进制文件不进行修改
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.mp4 binary
+*.webm binary
+*.wav binary
+*.mp3 binary
+*.exe binary
+*.dll binary
+*.zip binary
+*.7z binary
+*.tar binary
+*.gz binary
+
+# 特定文件类型处理
+*.svg text
+package-lock.json text -diff
+yarn.lock text -diff 

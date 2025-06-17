@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CleanC - 简单易用的C盘清理工具</title>
+  <!-- 引入FontAwesome图标 -->
+  <link rel="stylesheet" href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+  <!-- 引入应用自定义样式 -->
+  <link rel="stylesheet" href="./src/css/style.css">
+  <!-- 优先样式，确保品牌和公众号区域正确显示 -->
+  <style>
+    .dashboard-footer {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #FFFFFF;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 100%;
+      box-sizing: border-box;
+      clear: both;
+    }
+    .next-wave-logo-lg {
+      width: 200px;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+    .wechat-qrcode-img {
+      max-width: 130px;
+      max-height: 130px;
+      object-fit: contain;
+    }
+    .brand-section, .wechat-section {
+      flex: 1;
+      min-width: 280px;
+      padding: 15px;
+      margin: 10px;
+      text-align: center;
+    }
+    .brand-section .brand-title {
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+    .brand-section .brand-description {
+      text-align: left;
+      margin-top: 15px;
+    }
+    .wechat-section {
+      background-color: #f8f8f8;
+      border-radius: 8px;
+      text-align: center;
+    }
+    @media (max-width: 768px) {
+      .dashboard-footer {
+        flex-direction: column;
+        align-items: center;
+      }
+      .brand-section, .wechat-section {
+        width: 100%;
+        text-align: center;
+      }
+    }
+    .about-btn {
+      background-color: #1976D2;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 20px;
+      display: block;
+      width: fit-content;
+      margin: 20px auto 10px;
+    }
+    .about-btn:hover {
+      background-color: #1565C0;
+      transform: translateY(-2px);
+    }
+    
+    /* 侧边栏品牌和公众号样式 */
+    .sidebar-brand {
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      text-align: center;
+      border-top: 1px solid rgba(224, 224, 224, 0.5);
+      padding-top: 15px;
+    }
+    
+    .sidebar-brand-title {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+    
+    .sidebar-logo {
+      width: 180px;
+      height: auto;
+      max-height: 50px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .sidebar-logo:hover {
+      transform: scale(1.05);
+    }
+    
+    .sidebar-wechat {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 10px;
+      margin: 0 15px 10px;
+      background-color: #09BB07;
+      color: white;
+      border-radius: 5px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .sidebar-wechat:hover {
+      background-color: #07A600;
+      transform: translateY(-1px);
+    }
+    
+    .sidebar-wechat i {
+      margin-right: 5px;
+      font-size: 15px;
+    }
+    
+    .sidebar-footer {
+      padding: 15px 0;
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .dashboard-about-btn-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边导航栏 -->
+    <div class="sidebar">
+      <div class="logo">
+        <i class="fas fa-broom"></i>
+        <h1>CleanC</h1>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item active" data-tab="dashboard">
+          <i class="fas fa-home"></i>
+          <span>主页</span>
+        </li>
+        <li class="nav-item" data-tab="quick-clean">
+          <i class="fas fa-bolt"></i>
+          <span>快速清理</span>
+        </li>
+        <li class="nav-item" data-tab="large-files">
+          <i class="fas fa-file-archive"></i>
+          <span>大文件查找</span>
+        </li>
+        <li class="nav-item" data-tab="duplicate-files">
+          <i class="fas fa-copy"></i>
+          <span>重复文件</span>
+        </li>
+        <li class="nav-item" data-tab="uninstall">
+          <i class="fas fa-trash-alt"></i>
+          <span>程序卸载</span>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <!-- 添加品牌logo -->
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-title">技术支持</div>
+          <img src="./assets/next-wave-logo.png" alt="Next Wave" class="sidebar-logo" id="sidebar-brand-logo">
+        </div>
+        
+        <!-- 添加公众号信息 -->
+        <div class="sidebar-wechat" id="sidebar-wechat">
+          <i class="fab fa-weixin"></i>
+          <span>查看公众号</span>
+        </div>
+        
+        <p style="margin: 5px 0;">为电脑小白设计</p>
+        <p style="margin: 5px 0;">版本 1.0.0</p>
+      </div>
+    </div>
+
+    <!-- 主内容区域 -->
+    <div class="main-content">
+      <!-- 仪表盘 -->
+      <div class="content-tab active" id="dashboard">
+        <div class="header">
+          <h2>欢迎使用 CleanC 清理工具</h2>
+          <p>快速安全地清理您的C盘，释放宝贵空间</p>
+        </div>
+
+        <div class="disk-info-card">
+          <div class="disk-usage">
+            <canvas id="diskChart"></canvas>
+          </div>
+          <div class="disk-details">
+            <h3>C盘使用情况</h3>
+            <div class="disk-stats">
+              <div class="stat-item">
+                <span class="label">总容量</span>
+                <span class="value" id="total-space">计算中...</span>
+              </div>
+              <div class="stat-item">
+                <span class="label">已用空间</span>
+                <span class="value" id="used-space">计算中...</span>
+              </div>
+              <div class="stat-item">
+                <span class="label">可用空间</span>
+                <span class="value" id="free-space">计算中...</span>
+              </div>
+            </div>
+            <button class="scan-btn primary-btn" id="scan-system-btn">
+              <i class="fas fa-search"></i> 开始扫描系统
+            </button>
+          </div>
+        </div>
+
+        <div class="quick-tips">
+          <h3>快速小贴士</h3>
+          <div class="tips-container">
+            <div class="tip-card">
+              <i class="fas fa-lightbulb"></i>
+              <h4>定期清理临时文件</h4>
+              <p>临时文件会占用大量空间，建议每周清理一次</p>
+            </div>
+            <div class="tip-card">
+              <i class="fas fa-exclamation-circle"></i>
+              <h4>注意备份重要文件</h4>
+              <p>清理前请确保重要文件已备份</p>
+            </div>
+            <div class="tip-card">
+              <i class="fas fa-star"></i>
+              <h4>卸载不用的程序</h4>
+              <p>卸载长期不用的程序可以释放更多空间</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 添加"关于CleanC"按钮 -->
+        <div class="dashboard-about-btn-container">
+          <button class="about-btn" id="show-about-btn">
+            <i class="fas fa-info-circle"></i> 关于CleanC
+          </button>
+        </div>
+      </div>
+
+      <!-- 快速清理 -->
+      <div class="content-tab" id="quick-clean">
+        <div class="header">
+          <h2>快速清理</h2>
+          <p>一键清理系统垃圾文件，安全快速</p>
+        </div>
+
+        <div class="scan-results" id="quick-clean-results">
+          <div class="result-summary">
+            <div class="summary-card">
+              <i class="fas fa-trash-alt"></i>
+              <h3>可清理空间</h3>
+              <p id="total-junk-size">0 MB</p>
+            </div>
+            <div class="summary-card">
+              <i class="fas fa-list"></i>
+              <h3>垃圾文件数量</h3>
+              <p id="junk-file-count">0 项</p>
+            </div>
+          </div>
+
+          <div class="cleanup-items">
+            <h3>清理项目</h3>
+            <div class="item-list" id="cleanup-item-list">
+              <!-- 清理项列表将动态生成 -->
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="secondary-btn" id="scan-again-btn">
+              <i class="fas fa-redo"></i> 重新扫描
+            </button>
+            <button class="primary-btn" id="clean-selected-btn">
+              <i class="fas fa-broom"></i> 清理所选项目
+            </button>
+          </div>
+        </div>
+
+        <div class="scan-placeholder" id="scan-placeholder">
+          <div class="placeholder-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h3>点击下方按钮开始扫描</h3>
+          <p>我们将安全地分析您的系统并找出可以清理的文件</p>
+          <button class="primary-btn" id="start-quick-scan-btn">
+            <i class="fas fa-bolt"></i> 开始扫描
+          </button>
+        </div>
+
+        <!-- 扫描进行中状态 -->
+        <div class="scanning-status" id="scanning-status">
+          <div class="spinner">
+            <i class="fas fa-circle-notch fa-spin"></i>
+          </div>
+          <h3>正在扫描系统...</h3>
+          <p>请稍候，这可能需要几分钟时间</p>
+          <div class="progress-bar">
+            <div class="progress" id="scan-progress"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 大文件查找 -->
+      <div class="content-tab" id="large-files">
+        <div class="header">
+          <h2>大文件查找</h2>
+          <p>找出占用空间最大的文件，合理管理您的磁盘空间</p>
+        </div>
+
+        <div class="search-controls">
+          <div class="size-filter">
+            <label for="min-file-size">最小文件大小:</label>
+            <select id="min-file-size">
+              <option value="50">50 MB</option>
+              <option value="100" selected>100 MB</option>
+              <option value="500">500 MB</option>
+              <option value="1000">1 GB</option>
+            </select>
+          </div>
+          <button class="primary-btn" id="find-large-files-btn">
+            <i class="fas fa-search"></i> 查找大文件
+          </button>
+        </div>
+
+        <div class="large-files-results" id="large-files-results">
+          <div class="result-header">
+            <h3>查找结果</h3>
+            <p>以下是占用空间最大的文件</p>
+          </div>
+          <div class="file-list-container">
+            <table class="file-list">
+              <thead>
+                <tr>
+                  <th>文件名</th>
+                  <th>大小</th>
+                  <th>位置</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="large-files-tbody">
+                <!-- 大文件列表将动态生成 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="scan-placeholder" id="large-files-placeholder">
+          <div class="placeholder-icon">
+            <i class="fas fa-file-archive"></i>
+          </div>
+          <h3>查找大文件</h3>
+          <p>点击上方按钮开始查找占用空间较大的文件</p>
+        </div>
+      </div>
+
+      <!-- 重复文件 -->
+      <div class="content-tab" id="duplicate-files">
+        <div class="header">
+          <h2>重复文件查找</h2>
+          <p>查找并删除内容完全相同的重复文件</p>
+        </div>
+
+        <div class="duplicate-search-controls">
+          <div class="path-selection">
+            <label for="search-path">搜索路径:</label>
+            <select id="search-path">
+              <option value="documents">我的文档</option>
+              <option value="downloads">下载</option>
+              <option value="pictures">图片</option>
+              <option value="videos">视频</option>
+              <option value="music">音乐</option>
+              <option value="custom">自定义...</option>
+            </select>
+            <input type="text" id="custom-path" placeholder="输入自定义路径...">
+          </div>
+          <button class="primary-btn" id="find-duplicates-btn">
+            <i class="fas fa-search"></i> 查找重复文件
+          </button>
+        </div>
+
+        <div class="duplicate-results" id="duplicate-results">
+          <!-- 重复文件查找结果将在这里显示 -->
+        </div>
+
+        <div class="scan-placeholder" id="duplicate-placeholder">
+          <div class="placeholder-icon">
+            <i class="fas fa-copy"></i>
+          </div>
+          <h3>查找重复文件</h3>
+          <p>选择要扫描的文件夹，然后点击上方按钮开始查找</p>
+        </div>
+      </div>
+
+      <!-- 程序卸载 -->
+      <div class="content-tab" id="uninstall">
+        <div class="header">
+          <h2>程序轻松卸载</h2>
+          <p>卸载不需要的程序，释放更多空间</p>
+        </div>
+
+        <div class="app-list-container">
+          <div class="app-filter">
+            <input type="text" id="app-search" placeholder="搜索程序...">
+            <select id="app-sort" title="排序方式">
+              <option value="name">按名称排序</option>
+              <option value="size">按大小排序</option>
+              <option value="date">按安装日期排序</option>
+            </select>
+          </div>
+
+          <div class="app-list" id="installed-apps">
+            <!-- 已安装程序列表将动态生成 -->
+            <div class="loading-apps">
+              <i class="fas fa-circle-notch fa-spin"></i>
+              <p>正在加载已安装程序...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 清理完成弹窗 -->
+  <div class="modal" id="cleanup-complete-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="fas fa-check-circle"></i>
+        <h3>清理完成！</h3>
+      </div>
+      <div class="modal-body">
+        <p>已成功清理 <span id="freed-space">0 MB</span> 的磁盘空间。</p>
+        <div class="cleanup-summary" id="cleanup-summary">
+          <!-- 清理摘要将动态生成 -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="primary-btn" id="modal-close-btn">
+          <i class="fas fa-check"></i> 确定
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 关于对话框 -->
+  <div class="modal" id="about-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="fas fa-info-circle"></i>
+        <h3>关于 CleanC</h3>
+        <div class="modal-controls">
+          <span id="about-close-btn"><i class="fas fa-times"></i></span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="about-content">
+          <div class="about-app">
+            <div class="app-logo">
+              <i class="fas fa-broom"></i>
+              <h2>CleanC</h2>
+            </div>
+            <div class="app-version">版本 1.0.0</div>
+            <div class="app-description">
+              <p>CleanC是一款专为电脑初学者设计的C盘清理与优化工具。它提供了比市面上同类产品更快速、
+              界面更直观友好的体验，让用户能够安全、轻松地管理和释放C盘空间。</p>
+            </div>
+          </div>
+          
+          <div class="brand-section">
+            <div class="brand-title">技术提供</div>
+            <div style="text-align: center; width: 100%; display: flex; justify-content: center; margin: 15px 0;">
+              <img src="./assets/next-wave-logo.png" alt="Next Wave" class="next-wave-logo-lg">
+            </div>
+            <div class="brand-description">
+              <p>Next Wave 是一家专注于创新软件解决方案的技术公司，致力于打造简单易用、功能强大的应用程序。
+              我们相信科技应该让生活变得更简单，而不是更复杂。</p>
+            </div>
+          </div>
+          
+          <div class="wechat-section">
+            <div class="wechat-title">
+              <i class="fab fa-weixin"></i>
+              <h4>关注我们的公众号</h4>
+            </div>
+            <div class="wechat-qrcode">
+              <img src="./assets/qrcode-wechat.png" alt="公众号二维码" class="wechat-qrcode-img">
+            </div>
+            <div class="wechat-description">
+              <p>扫描二维码，获取更多系统优化技巧与软件更新</p>
+              <div class="social-icons">
+                <a href="#" class="wechat-icon" title="复制微信公众号">
+                  <i class="fab fa-weixin"></i> Next Wave优化助手
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="about-footer">
+            <div class="copyright">© 2025 Next Wave. 保留所有权利。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript库 -->
+  <script src="./node_modules/chart.js/dist/chart.umd.js"></script>
+  <!-- 应用脚本 -->
+  <script src="./src/js/renderer.js"></script>
+</body>
+</html> 

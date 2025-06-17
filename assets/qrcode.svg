@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- 二维码背景 -->
+  <rect x="0" y="0" width="200" height="200" fill="#ffffff" stroke="#1976D2" stroke-width="5"/>
+  
+  <!-- 简化的二维码图案 -->
+  <g fill="#1976D2">
+    <!-- 左上角定位点 -->
+    <rect x="20" y="20" width="40" height="40"/>
+    <rect x="30" y="30" width="20" height="20" fill="white"/>
+    
+    <!-- 右上角定位点 -->
+    <rect x="140" y="20" width="40" height="40"/>
+    <rect x="150" y="30" width="20" height="20" fill="white"/>
+    
+    <!-- 左下角定位点 -->
+    <rect x="20" y="140" width="40" height="40"/>
+    <rect x="30" y="150" width="20" height="20" fill="white"/>
+    
+    <!-- 二维码数据点 (随机图案) -->
+    <rect x="80" y="20" width="10" height="10"/>
+    <rect x="110" y="40" width="10" height="10"/>
+    <rect x="50" y="70" width="10" height="10"/>
+    <rect x="90" y="80" width="10" height="10"/>
+    <rect x="120" y="70" width="10" height="10"/>
+    <rect x="70" y="100" width="10" height="10"/>
+    <rect x="100" y="110" width="10" height="10"/>
+    <rect x="130" y="120" width="10" height="10"/>
+    <rect x="50" y="130" width="10" height="10"/>
+    <rect x="80" y="140" width="10" height="10"/>
+    <rect x="110" y="140" width="10" height="10"/>
+    <rect x="140" y="90" width="10" height="10"/>
+  </g>
+  
+  <!-- 中间的图标 -->
+  <circle cx="100" cy="100" r="20" fill="#1976D2"/>
+  <text x="100" y="105" font-family="Arial" font-size="12" text-anchor="middle" fill="white">扫码</text>
+</svg> 

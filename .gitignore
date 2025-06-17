@@ -1,0 +1,77 @@
+# 依赖目录
+node_modules/
+
+# 构建输出
+dist/
+build/
+out/
+build-temp/
+
+# NPM锁定文件（建议忽略避免冲突）
+package-lock.json
+
+# 日志文件
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# 测试覆盖率
+coverage/
+
+# 环境变量文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 缓存目录
+.cache/
+.npm
+.yarn-integrity
+
+# 编辑器目录和文件
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# 特定于Electron的文件
+app/renderer.prod.js
+app/renderer.prod.js.map
+app/style.css
+app/style.css.map
+app/dist/
+app/main.prod.js
+app/main.prod.js.map
+
+# 特定于Windows的安装包和输出
+*.exe
+*.msi
+*.msix
+*.msm
+*.msp
+
+# 临时文件和备份
+tmp/
+temp/
+backup_*/
+*backup*/
+
+# 系统生成的文件
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+
+# 调试文件
+*.pdb
+*.idb
+
+# 其他
+.nyc_output/ 
