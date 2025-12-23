@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // 初始化程序卸载功能
   initUninstall();
 
+  // 初始化软件搬家功能 (New)
+  initAppMigration();
+
   // 初始化关于弹窗功能
   initAboutModal();
 
@@ -3141,5 +3144,483 @@ function decodeIfNeeded(text) {
   } catch (e) {
     console.error('处理文本时出错:', e);
     return '<i class="fas fa-exclamation-triangle"></i> <span style="color:#888">解析错误</span>';
+  }
+}
+
+// ==================== 软件搬家功能 (商业化核心) ====================
+
+// 初始化软件搬家功能
+function initAppMigration() {
+  const refreshBtn = document.getElementById('refresh-migration-apps');
+  const migrationTab = document.querySelector('.nav-item[data-tab="app-migration"]');
+  const chipContainer = document.querySelector('.filter-chips');
+
+  // 绑定刷新按钮
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', () => {
+      loadMigrationApps(true);
+    });
+  }
+
+  // 绑定Tab切换事件（首次加载）
+  if (migrationTab) {
+    migrationTab.addEventListener('click', () => {
+      const listContainer = document.getElementById('migration-apps-list');
+      // 如果列表为空，说明是第一次加载
+      if (listContainer && (listContainer.children.length === 0 || listContainer.querySelector('.loading-apps'))) {
+        loadMigrationApps();
+      }
+    });
+  }
+
+  // 绑定筛选Chip点击事件
+  if (chipContainer) {
+    chipContainer.addEventListener('click', (e) => {
+      if (e.target.classList.contains('chip')) {
+        // 切换激活状态
+        chipContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        e.target.classList.add('active');
+
+        // 执行筛选
+        const filterType = e.target.getAttribute('data-filter');
+        filterMigrationApps(filterType);
+      }
+    });
+  }
+}
+
+// 全局变量存储待迁移的应用列表
+let cachedMigrationApps = [];
+
+// 加载可迁移的软件列表
+async function loadMigrationApps(forceRefresh = false) {
+  const container = document.getElementById('migration-apps-list');
+  if (!container) return;
+
+  // 显示加载状态
+  container.innerHTML = `
+    <div class="loading-apps">
+      <i class="fas fa-truck-moving fa-bounce"></i>
+      <p>正在扫描C盘软件...</p>
+    </div>
+  `;
+
+  try {
+    // 1. 获取所有已安装软件
+    const allApps = await ipcRenderer.invoke('get-installed-apps');
+
+    // 2. 过滤并处理数据
+    cachedMigrationApps = allApps.map(app => {
+      // 尝试推断安装路径
+      const installPath = guessInstallPath(app);
+      return { ...app, installPath };
+    }).filter(app => {
+      // 筛选条件：
+      // 1. 必须有有效的 C 盘路径
+      // 2. 排除系统组件和驱动程序 (简单的排除列表)
+      // 3. 排除 Windows 目录下的东西
+      if (!app.installPath) return false;
+
+      const pathUpper = app.installPath.toUpperCase();
+      if (!pathUpper.startsWith('C:')) return false;
+      if (pathUpper.includes('\\WINDOWS\\')) return false;
+      if (pathUpper.includes('\\MICROSOFT\\EDGE\\')) return false;
+      // 过滤掉小于 10MB 的小软件，避免列表过于杂乱
+      // 注意：size 可能是 Bytes 或者是 undefined，需要安全处理
+      if (app.size && app.size > 0 && app.size < 1024 * 1024 * 10) return false;
+
+      return true;
+    });
+
+    // 2.5 批量检查这些路径是否已经是 Junction (前端推断路径的二次确认)
+    // 这对于识别剪映等只搬运子目录的应用至关重要
+    const pathsToCheck = cachedMigrationApps.map(app => app.installPath);
+    try {
+      if (pathsToCheck.length > 0) {
+        console.log('正在批量验证前端推断路径的迁移状态...');
+        const migrationStatuses = await ipcRenderer.invoke('check-paths-migration-status', pathsToCheck);
+
+        // 更新app状态
+        cachedMigrationApps.forEach(app => {
+          if (app.installPath && migrationStatuses[app.installPath]) {
+            const status = migrationStatuses[app.installPath];
+            if (status.isMigrated) {
+              console.log(`前端路径命中已迁移: ${app.name} -> ${status.migratedTo}`);
+              app.isMigrated = true;
+              app.migratedTo = status.migratedTo;
+            }
+          }
+        });
+      }
+    } catch (e) {
+      console.error('前端路径状态检测失败:', e);
+    }
+
+    // 3. 渲染列表
+    renderMigrationList(cachedMigrationApps);
+
+  } catch (error) {
+    console.error('加载迁移列表失败:', error);
+    container.innerHTML = `
+      <div class="error-state">
+        <div style="text-align:center; padding: 20px;">
+          <i class="fas fa-exclamation-triangle" style="font-size: 32px; color: #F44336; margin-bottom: 10px;"></i>
+          <p>扫描软件列表失败: ${error.message}</p>
+          <button class="secondary-btn" onclick="loadMigrationApps(true)" style="margin-top: 10px;">重试</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// 猜测软件安装路径
+function guessInstallPath(app) {
+  // 如果后端以后提供了 InstallLocation，优先使用
+  if (app.InstallLocation && app.InstallLocation.length > 2) {
+    return app.InstallLocation;
+  }
+
+  // 从卸载字符串中解析
+  if (!app.uninstallString) return null;
+
+  // 常见模式："C:\Program Files\App\uninstall.exe"
+  // 我们提取前面带引号的部分，或者第一个空格前的部分
+  let pathStr = '';
+  const quoteMatch = app.uninstallString.match(/"([^"]+)"/);
+  if (quoteMatch) {
+    pathStr = quoteMatch[1];
+  } else {
+    // 没有引号，取在 .exe 之前的部分（包括 .exe）
+    const exeMatch = app.uninstallString.match(/([a-zA-Z]:\\[^ ]+\.exe)/i);
+    if (exeMatch) {
+      pathStr = exeMatch[1];
+    } else {
+      // 简单取第一个空格前
+      pathStr = app.uninstallString.split(' ')[0];
+    }
+  }
+
+  // 验证是否包含合法的绝对路径
+  if (!pathStr || !pathStr.match(/^[a-zA-Z]:\\/)) return null;
+
+  // 寻找父目录
+  const lastSlashIndex = pathStr.lastIndexOf('\\');
+  if (lastSlashIndex > 3) { // 确保不是根目录
+    // 如果是 uninstall.exe，那上一级就是根目录
+    // 如果是 installer\setup.exe，那可能要回退两级。这里先做简单处理。
+    return pathStr.substring(0, lastSlashIndex);
+  }
+
+  return null;
+}
+
+// 渲染迁移列表
+function renderMigrationList(apps) {
+  const container = document.getElementById('migration-apps-list');
+
+  if (apps.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="text-align: center; padding: 40px; color: #666;">
+        <i class="fas fa-check-circle" style="color: #4CAF50; font-size: 48px; margin-bottom: 20px;"></i>
+        <p>太棒了！您的C盘非常干净，找不到需要搬家的第三方大软件。</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = '';
+
+  apps.forEach(app => {
+    // 判断是否是大软件 (>1GB)
+    // 根据 main.js 的实现，size 很可能是 Bytes
+    const isLarge = app.size && app.size > 1024 * 1024 * 1024;
+
+    // 关键词匹配推荐
+    const isRecommended = /微信|WeChat|QQ|钉钉|DingTalk|Line|WhatsApp/.test(app.name);
+
+    // 搬家状态
+    const isMigrated = app.isMigrated;
+    const migratedTarget = app.migratedTo;
+    let targetDriveLetter = '';
+
+    if (migratedTarget) {
+      // 提取盘符，例如 "D:\..." -> "D"
+      const match = migratedTarget.match(/^([a-zA-Z]):/);
+      if (match) targetDriveLetter = match[1].toUpperCase();
+    }
+
+    const item = document.createElement('div');
+    item.className = 'app-item migration-item';
+    // 复用 app-item 样式的基础，添加一些自定义微调
+    item.style.display = 'flex';
+    item.style.alignItems = 'center';
+    item.style.padding = '15px';
+    item.style.borderBottom = '1px solid #eee';
+    item.style.backgroundColor = isMigrated ? '#F0F9EB' : 'white'; // 已搬家的背景微绿
+
+    item.setAttribute('data-size', app.size || 0);
+    item.setAttribute('data-name', app.name);
+    item.setAttribute('data-recommend', isRecommended);
+    item.setAttribute('data-migrated', isMigrated);
+
+    // 格式化大小
+    const sizeFormatted = app.size ? formatBytes(app.size) : i18n.t('common.unknownSize');
+
+    // 显示路径：如果有新路径显示新路径，否则显示原路径
+    const displayPath = isMigrated ? migratedTarget : app.installPath;
+
+    // 按钮样式和逻辑
+    let buttonHtml = '';
+    if (isMigrated) {
+      // 已搬家状态按钮
+      buttonHtml = `
+        <button class=\"primary-btn migrate-btn\" style=\"background-color: #4CAF50; cursor: default; opacity: 0.8;\" disabled>
+          <i class=\"fas fa-check-circle\"></i> ${i18n.t('appMigration.migrated')} (${targetDriveLetter}:)
+        </button>
+      `;
+    } else {
+      // 未搬家状态按钮
+      buttonHtml = `
+        <button class=\"primary-btn migrate-btn\" style=\"background-color: #2196F3;\" onclick=\"startAppMigration('${encodeURIComponent(JSON.stringify(app))}')\">
+          <i class=\"fas fa-truck-moving\"></i> ${i18n.t('appMigration.migrateBtn')}
+        </button>
+      `;
+    }
+
+    item.innerHTML = `
+      <div class=\"app-icon\" style=\"width: 48px; height: 48px; background-color: ${stringToColor(app.name)}; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 15px; font-weight: bold;\">
+        ${app.name.charAt(0).toUpperCase()}
+      </div>
+      <div class=\"app-info\" style=\"flex: 1;\">
+        <div class=\"app-name\" style=\"font-weight: bold; font-size: 16px; margin-bottom: 5px;\">
+          ${app.name}
+          ${isMigrated ? `<span style="background-color: #E8F5E9; color: #2E7D32; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">${i18n.t('appMigration.migrated')}</span>` : ''}
+          ${isRecommended && !isMigrated ? `<span style="background-color: #E8F5E9; color: #2E7D32; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">${i18n.t('appMigration.recommend')}</span>` : ''}
+          ${isLarge && !isMigrated ? `<span style="background-color: #FFF3E0; color: #EF6C00; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">${i18n.t('appMigration.largeApp')}</span>` : ''}
+        </div>
+        <div class=\"app-meta\" style=\"color: #666; font-size: 13px;\">
+          <span class=\"app-size\" style=\"margin-right: 15px;\"><i class=\"fas fa-hdd\"></i> ${sizeFormatted}</span>
+          <span class=\"app-path\" title=\"${displayPath}\"><i class=\"fas fa-folder\"></i> ${displayPath}</span>
+        </div>
+      </div>
+      <div class=\"app-actions\">
+        ${buttonHtml}
+      </div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+// 筛选功能
+function filterMigrationApps(type) {
+  const items = document.querySelectorAll('.migration-item');
+  items.forEach(item => {
+    let show = true;
+    if (type === 'large') {
+      const size = parseInt(item.getAttribute('data-size')) || 0;
+      if (size < 1024 * 1024 * 1024) show = false; // < 1GB
+    } else if (type === 'chat') {
+      const isRecommend = item.getAttribute('data-recommend') === 'true';
+      if (!isRecommend) show = false;
+    }
+    item.style.display = show ? 'flex' : 'none';
+  });
+}
+
+// 辅助函数：根据字符串生成固定颜色
+function stringToColor(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+  return '#' + '00000'.substring(0, 6 - c.length) + c;
+}
+
+// 开始迁移单个应用
+window.startAppMigration = async function (appJson) {
+  const app = JSON.parse(decodeURIComponent(appJson));
+  const t = (key) => window.i18n ? window.i18n.t(key) : key;
+
+  // 使用 i18n 替换硬编码的文本
+  const confirmTitle = t('appMigration.migrationConfirmTitle') || '确定要搬家吗？';
+  const confirmContent = (t('appMigration.migrationConfirmContent') || '确定要将 "{appName}" 迁移吗？').replace('{appName}', app.name);
+
+  if (!confirm(confirmTitle + '\n\n' + confirmContent)) {
+    return;
+  }
+
+  // 1. 获取可用目标磁盘
+  let drives = [];
+  try {
+    drives = await ipcRenderer.invoke('get-available-drives');
+  } catch (err) {
+    alert(t('common.error'));
+    return;
+  }
+
+  if (drives.length === 0) {
+    alert('未检测到可用的其他磁盘（如 D 盘、E 盘）。'); // 暂时保留一点中文作为兜底
+    return;
+  }
+
+  // 2. 弹出自定义磁盘选择模态框
+  showDriveSelectionModal(drives, app);
+};
+
+// 显示磁盘选择模态框
+function showDriveSelectionModal(drives, app) {
+  const t = (key) => window.i18n ? window.i18n.t(key) : key;
+
+  // 创建模态框容器
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.id = 'drive-select-modal';
+  modal.style.display = 'flex';
+  modal.style.zIndex = '9998';
+
+  // 1. 安全解析应用大小
+  let appSize = Number(app.size);
+  // 如果解析失败或为0，视为无效/未知大小，此时我们默认允许迁移（或者给予警告但允许操作）
+  // 这里我们将 isSizeUnknown 设为 true
+  const isSizeUnknown = isNaN(appSize) || appSize <= 0;
+  if (isSizeUnknown) {
+    appSize = 0;
+  }
+
+  // 构建磁盘列表 HTML
+  let drivesHtml = '<div class="drive-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin: 20px 0;">';
+
+  drives.forEach(drive => {
+    // 检查空间是否充足
+    // 如果大小未知，或者 (可用空间 > 应用大小 + 500MB 缓冲)
+    const isEnough = isSizeUnknown || (drive.available > appSize + 500 * 1024 * 1024);
+
+    const spaceClass = isEnough ? 'text-success' : 'text-danger';
+    const cursorStyle = isEnough ? 'pointer' : 'not-allowed';
+
+    const driveStyle = `
+      border: 1px solid #ddd; 
+      border-radius: 8px; 
+      padding: 15px; 
+      text-align: center; 
+      cursor: ${cursorStyle}; 
+      transition: all 0.2s;
+      background: white;
+      position: relative;
+    `;
+
+    // 如果空间不足，添加透明度或其他视觉提示
+    const opacityStyle = isEnough ? '' : 'opacity: 0.6;';
+
+    drivesHtml += `
+      <div class="drive-option ${isEnough ? '' : 'disabled'}" 
+           style="${driveStyle} ${opacityStyle}"
+           data-drive="${drive.mounted}"
+           ${isEnough ? `onclick="handleDriveSelect('${drive.mounted}', true, '${encodeURIComponent(JSON.stringify(app))}')"` : ''}
+           onmouseover="${isEnough ? "this.style.borderColor='#2196F3';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'" : ''}"
+           onmouseout="${isEnough ? "this.style.borderColor='#ddd';this.style.boxShadow='none'" : ''}">
+        <div style="font-size: 24px; color: #333; margin-bottom: 5px; font-weight: bold;">
+          <i class="fas fa-hdd"></i> ${drive.mounted}
+        </div>
+        <div style="font-size: 12px; color: #666;">
+          ${t('appMigration.spaceAvailable')}: <span class="${spaceClass}">${formatBytes(drive.available)}</span>
+        </div>
+        ${!isEnough ? `<div style="color: #F44336; font-size: 11px; margin-top: 5px;">空间不足</div>` : ''}
+      </div>
+    `;
+  });
+  drivesHtml += '</div>';
+
+  modal.innerHTML = `
+    <div class="modal-content" style="max-width: 500px; padding: 20px 25px;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+           <i class="fas fa-hdd" style="color: #2196F3;"></i>
+           <h3 style="margin: 0; font-size: 18px;">${t('appMigration.selectTargetDrive')}</h3>
+        </div>
+        <span class="close-btn" style="cursor: pointer; font-size: 20px; color: #999;" onclick="document.body.removeChild(document.getElementById('drive-select-modal'))">
+          <i class="fas fa-times"></i>
+        </span>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 10px; font-size: 14px; color: #555;">
+          ${t('appMigration.spaceRequired')}: 
+          <strong style="color: #333;">${isSizeUnknown ? '未知' : formatBytes(appSize)}</strong>
+        </p>
+        ${drivesHtml}
+        <div style="text-align: right; margin-top: 10px;">
+          <button class="secondary-btn" onclick="document.body.removeChild(document.getElementById('drive-select-modal'))">
+            ${t('common.cancel')}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+// 处理磁盘选择
+window.handleDriveSelect = async function (driveMounted, isEnough, appJson) {
+  if (!isEnough) {
+    alert('目标磁盘空间不足以存放该应用。');
+    return;
+  }
+
+  // 关闭选择框
+  const selectModal = document.getElementById('drive-select-modal');
+  if (selectModal) document.body.removeChild(selectModal);
+
+  const app = JSON.parse(decodeURIComponent(appJson));
+  await executeAppMigration(app, driveMounted);
+};
+
+// 执行迁移逻辑
+async function executeAppMigration(app, targetDriveMounted) {
+  const t = (key) => window.i18n ? window.i18n.t(key) : key;
+
+  // 显示加载界面
+  const loadingModal = document.createElement('div');
+  loadingModal.className = 'modal';
+  loadingModal.id = 'migration-loading-modal';
+  loadingModal.style.display = 'flex';
+  loadingModal.style.zIndex = '9999';
+  loadingModal.innerHTML = `
+    <div class="modal-content" style="text-align: center; padding: 40px; max-width: 400px;">
+      <i class="fas fa-truck-moving fa-3x fa-bounce" style="color: #2196F3; margin-bottom: 20px;"></i>
+      <h3>正在搬运 "${app.name}" ...</h3>
+      <p>正在将数据移动到 ${targetDriveMounted} 盘</p>
+      <div style="margin: 20px 0; background: #eee; height: 6px; border-radius: 3px; overflow: hidden;">
+         <div style="width: 50%; height: 100%; background: #2196F3; animation: progress 2s infinite ease-in-out;"></div>
+      </div>
+      <p style="font-size: 12px; color: #666;">数据量较大时需要几分钟，请勿关闭程序...</p>
+      <style>@keyframes progress { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }</style>
+    </div>
+  `;
+  document.body.appendChild(loadingModal);
+
+  // 执行迁移
+  try {
+    const result = await ipcRenderer.invoke('migrate-folder', {
+      sourcePath: app.installPath,
+      targetDrive: targetDriveMounted
+    });
+
+    // 移除 Loading
+    if (document.body.contains(loadingModal)) document.body.removeChild(loadingModal);
+
+    if (result.success) {
+      const msg = (t('appMigration.migrationSuccessContent') || '成功').replace('{appName}', app.name).replace('{targetPath}', result.targetPath);
+      alert(t('appMigration.migrationSuccessTitle') + '\n\n' + msg);
+      // 刷新列表
+      loadMigrationApps(true);
+    } else {
+      alert(`${t('appMigration.migrationFailedTitle')}: ${result.error || t('common.unknownError')}\n\n${t('appMigration.checkFileUsage')}`);
+    }
+
+  } catch (error) {
+    if (document.body.contains(loadingModal)) document.body.removeChild(loadingModal);
+    alert(`${t('common.error')}: ${error.message}`);
   }
 } 

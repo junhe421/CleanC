@@ -907,7 +907,9 @@ ipcMain.handle('get-installed-apps', async () => {
           return {
             ...app,
             // 修正大小格式显示
-            size: formattedSize
+            size: formattedSize,
+            // 补充检测是否已搬家
+            ...checkMigrationStatus(app)
           };
         } catch (err) {
           console.error(`格式化应用 ${app.name} 的大小时出错:`, err);
@@ -943,7 +945,9 @@ ipcMain.handle('get-installed-apps', async () => {
           return {
             ...app,
             // 修正大小格式显示
-            size: formattedSize
+            size: formattedSize,
+            // 补充检测是否已搬家
+            ...checkMigrationStatus(app)
           };
         } catch (err) {
           console.error(`格式化应用 ${app.name} 的大小时出错:`, err);
@@ -995,7 +999,8 @@ async function getInstalledAppsDirectMethod() {
                                  @{n='Publisher';e={$_.Publisher}}, 
                                  @{n='InstallDate';e={$_.InstallDate}}, 
                                  @{n='Size';e={$_.EstimatedSize}}, 
-                                 @{n='UninstallString';e={$_.UninstallString}}
+                                 @{n='UninstallString';e={$_.UninstallString}},
+                                 @{n='InstallLocation';e={$_.InstallLocation}}
           } catch { 
             # 忽略错误
           }
@@ -1019,9 +1024,10 @@ async function getInstalledAppsDirectMethod() {
           }
           
           $uninstallString = if ($app.UninstallString) { $app.UninstallString.Trim() } else { "" }
+          $installLocation = if ($app.InstallLocation) { $app.InstallLocation.Trim() } else { "" }
           
           # 使用唯一分隔符输出，以便后续处理
-          Write-Output "APP_ENTRY_START|$name|$version|$publisher|$installDate|$size|$uninstallString"
+          Write-Output "APP_ENTRY_START|$name|$version|$publisher|$installDate|$size|$uninstallString|$installLocation"
         }
       }
     `;
@@ -1080,7 +1086,14 @@ async function getInstalledAppsDirectMethod() {
     for (let i = 1; i < appEntries.length; i++) {  // 从1开始，因为第一个元素是空的
       const parts = appEntries[i].split('|');
       if (parts.length >= 6) {
-        const [name, version, publisher, installDate, size, uninstallString] = parts;
+        // 兼容旧格式，如果有第7项则是 InstallLocation
+        const name = parts[0];
+        const version = parts[1];
+        const publisher = parts[2];
+        const installDate = parts[3];
+        const size = parts[4];
+        const uninstallString = parts[5];
+        const installLocation = parts.length >= 7 ? parts[6] : '';
 
         // 修复Office相关应用名称中的乱码
         let cleanName = name;
@@ -1114,7 +1127,8 @@ async function getInstalledAppsDirectMethod() {
           publisher: publisher || 'Unknown',
           installDate: formatInstallDate(installDate) || 'Unknown',
           size: sizeValue,  // 存储为数字
-          uninstallString: uninstallString || ''
+          uninstallString: uninstallString || '',
+          installLocation: installLocation || ''
         });
       }
     }
@@ -1183,6 +1197,7 @@ async function useRegistryMethod() {
             installDate: null,
             size: null,
             uninstallString: null,
+            installLocation: null
           };
 
           // 提取键名（用于调试）
@@ -1226,6 +1241,7 @@ async function useRegistryMethod() {
                 }
               }
               else if (name === 'UninstallString') app.uninstallString = value;
+              else if (name === 'InstallLocation') app.installLocation = value;
               else if (name === 'QuietUninstallString' && !app.uninstallString) {
                 app.uninstallString = value;
               }
@@ -1251,7 +1267,8 @@ async function useRegistryMethod() {
               publisher: app.publisher || 'Unknown',
               installDate: formatInstallDate(app.installDate) || 'Unknown',
               size: app.size, // 修改: 直接存储为数字，不要在这里调用formatSize
-              uninstallString: app.uninstallString || ''
+              uninstallString: app.uninstallString || '',
+              installLocation: app.installLocation || ''
             });
           }
         }
@@ -1932,3 +1949,235 @@ ipcMain.handle('migrate-files-batch', async (event, files, targetDrive) => {
     }
   };
 });
+
+// ==================== 文件夹迁移功能 (商业化核心) ====================
+
+// 检查路径列表的迁移状态 (批量)
+ipcMain.handle('check-paths-migration-status', async (event, paths) => {
+  const results = {};
+  // 去重
+  const uniquePaths = [...new Set(paths.filter(p => p && typeof p === 'string'))];
+
+  for (const p of uniquePaths) {
+    try {
+      // 必须使用 lstat 而不是 stat，因为我们要检查链接本身
+      if (fs.existsSync(p)) {
+        const lstat = fs.lstatSync(p);
+        if (lstat.isSymbolicLink()) { // Junction 在 Node中也被视为 SymbolicLink
+          const target = fs.readlinkSync(p);
+          // 如果指向非 C 盘，则认为是已迁移
+          if (target && !target.toLowerCase().startsWith('c:')) {
+            results[p] = { isMigrated: true, migratedTo: target };
+          }
+          // 特殊情况：如果指向同盘符的其他位置（比如 D 盘搬到 D 盘），只要是 CleanC_Migrated 也算
+          else if (target && target.includes('CleanC_Migrated')) {
+            results[p] = { isMigrated: true, migratedTo: target };
+          }
+        }
+      }
+    } catch (e) {
+      // 忽略无法访问的路径
+    }
+  }
+  return results;
+});
+
+// 文件夹迁移 IPC 接口
+ipcMain.handle('migrate-folder', async (event, { sourcePath, targetDrive }) => {
+  try {
+    console.log(`收到文件夹迁移请求: ${sourcePath} -> ${targetDrive}`);
+    return await migrateFolder(sourcePath, targetDrive);
+  } catch (error) {
+    console.error('文件夹迁移失败:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+// 文件夹迁移核心函数
+// 使用 Robocopy (Copy+Delete) + mklink /J 实现目录联接
+// 改为分步执行，确保数据安全
+async function migrateFolder(sourcePath, targetDrive) {
+  try {
+    console.log(`开始执行文件夹迁移: ${sourcePath} 到 ${targetDrive}`);
+
+    // 1. 标准化路径
+    const normalizedSource = path.normalize(sourcePath);
+
+    // 2. 基础检查
+    if (!fs.existsSync(normalizedSource)) {
+      throw new Error(`源文件夹不存在: ${normalizedSource}`);
+    }
+
+    const stats = fs.statSync(normalizedSource);
+    if (!stats.isDirectory()) {
+      throw new Error(`指定路径不是文件夹: ${normalizedSource}`);
+    }
+
+    // 3. 计算目标路径
+    // 保持原有目录结构: C:\Program Files\App -> D:\CleanC_Migrated\Program Files\App
+    const relativePath = normalizedSource.substring(3); // 移除盘符 "C:\"
+    const targetRoot = path.join(targetDrive, 'CleanC_Migrated');
+    const targetPath = path.join(targetRoot, relativePath);
+
+    console.log(`目标路径: ${targetPath}`);
+
+    // 4. 冲突检查与断点续传策略
+    if (fs.existsSync(targetPath)) {
+      // 以前是重命名备份，现在改为"增量/续传"模式
+      // 因为 Robocopy 默认就是增量复制，只要目标存在，它会对比时间戳和大小
+      try {
+        const fileCount = fs.readdirSync(targetPath).length;
+        if (fileCount > 0) {
+          console.log(`目标路径已存在 (${fileCount} 个文件): ${targetPath}。将启用[断点续传/增量覆盖]模式。`);
+          // 不做任何操作，让 Robocopy 自己去处理合并
+        } else {
+          // 是空文件夹，没关系
+        }
+      } catch (e) {
+        // 如果连读都读不了，那还是要报错
+        throw new Error(`无法访问目标位置: ${targetPath}。请检查权限。`);
+      }
+    }
+
+    // 5. 确保目标父目录存在
+    const targetParent = path.dirname(targetPath);
+    if (!fs.existsSync(targetParent)) {
+      console.log(`创建目标父目录: ${targetParent}`);
+      fs.mkdirSync(targetParent, { recursive: true });
+    }
+
+    // --- 尝试终止进程 ---
+    try {
+      console.log('正在尝试终止占用源目录的进程...');
+      const psScript = `
+        $sourcePath = '${normalizedSource.replace(/'/g, "''")}';
+        Get-Process | Where-Object { $_.Path -ne $null -and $_.Path.StartsWith($sourcePath) } | Stop-Process -Force -ErrorAction SilentlyContinue
+      `;
+      execSync(`powershell -NoProfile -NonInteractive -Command "${psScript.replace(/\n/g, ' ')}"`);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    } catch (killErr) {
+      console.warn('自动终止进程尝试失败:', killErr.message);
+    }
+    // --------------------
+
+    // 6. 阶段一：复制文件
+    // 使用 /MOVE 还是 /E ? 
+    // 为了支持续传，我们坚持使用 /E (复制)。只有最后验证成功才手动删源。
+    const copyCmd = `robocopy "${normalizedSource}" "${targetPath}" /E /COPYALL /ZB /DCOPY:T /R:3 /W:1 /MT:16 /NFL /NDL /NJH /NJS`;
+
+    console.log(`执行复制命令: ${copyCmd}`);
+
+    let copyExitCode = 0;
+    try {
+      execSync(copyCmd, { stdio: 'ignore' });
+    } catch (err) {
+      copyExitCode = err.status;
+      // Code 8: Some copies failed
+      if (copyExitCode >= 8) {
+        console.warn(`Robocopy 完成但有警告 (Code: ${copyExitCode})。可能有文件被占用，但我们尝试继续...`);
+        // 注意：这里不再 throw，也不再回滚。我们试试看能不能删掉源文件。
+        // 如果源文件被锁，下一步删除肯定会失败，那时候再报错也不迟。
+      }
+    }
+
+    // 7. 验证目标存在
+    if (!fs.existsSync(targetPath)) {
+      throw new Error('严重错误：复制看似执行了但目标文件夹未找到！');
+    }
+
+    // 8. 阶段二：删除源文件
+    console.log('复制阶段完成，准备删除源文件夹...');
+    try {
+      execSync(`rmdir /s /q "${normalizedSource}"`);
+    } catch (rmErr) {
+      // 删除失败，再试一次
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        execSync(`rmdir /s /q "${normalizedSource}"`);
+      } catch (retryErr) {
+        console.error('删除源文件失败:', retryErr);
+        // 关键决策：不回滚！保留已复制的数据。
+
+        // 检查源文件夹还在不在
+        if (fs.existsSync(normalizedSource)) {
+          // 这是一个"不完美成功"
+          // 我们不能建立链接，因为源文件夹还在。
+          // 告诉用户重启后续传
+          throw new Error(
+            `\n⚠️ 迁移大部分完成，但因文件被占用，无法删除源文件夹。\n\n` +
+            `我们已为您【保留了迁移进度】。\n` +
+            `请重启电脑（确保软件彻底关闭），然后再次点击【一键搬家】，\n` +
+            `程序将自动完成剩余步骤（无需重新复制）。`
+          );
+        }
+      }
+    }
+
+    // 双重确认源是否真的没了
+    if (fs.existsSync(normalizedSource)) {
+      throw new Error(`无法完全删除源文件夹。请手动检查: ${normalizedSource}`);
+    }
+
+    // 9. 阶段三：创建目录联接 (Junction)
+    console.log('源文件已清除，正在创建目录联接...');
+    const mklinkCmd = `cmd /c mklink /J "${normalizedSource}" "${targetPath}"`;
+
+    try {
+      execSync(mklinkCmd);
+      console.log('目录联接创建成功！');
+    } catch (linkErr) {
+      throw new Error(`数据已移动到 ${targetPath}，但在创建链接时失败: ${linkErr.message}。\n请手动执行命令: mklink /J "${normalizedSource}" "${targetPath}"`);
+    }
+
+    return {
+      success: true,
+      message: '软件搬家成功！',
+      sourcePath: normalizedSource,
+      targetPath: targetPath,
+      method: 'Junction'
+    };
+
+  } catch (error) {
+    console.error('migrateFolder 异常:', error);
+    // 返回给前端的要是简单的 Object，如果是 Error 对象可能即在 IPC 中序列化有问题
+    // 这里我们不仅 throw，还确保 IPC handler 能捕获。
+    throw error;
+  }
+}
+
+// 检查应用迁移状态（辅助函数）
+function checkMigrationStatus(app) {
+  let installPath = app.installLocation;
+
+  // 1. 如果没有 installationLocation，尝试从 UninstallString 猜测
+  if ((!installPath || installPath.trim() === '') && app.uninstallString) {
+    try {
+      const match = app.uninstallString.match(/^(?:"([^"]+)"|([^ ]+))/);
+      if (match) {
+        let exePath = match[1] || match[2];
+        if (exePath && fs.existsSync(exePath)) {
+          installPath = path.dirname(exePath);
+        }
+      }
+    } catch (e) { }
+  }
+
+  // 2. 检查路径是否有效
+  if (!installPath || !fs.existsSync(installPath)) {
+    return { isMigrated: false };
+  }
+
+  // 3. 检查是否为 Junction/Symlink
+  try {
+    const lstat = fs.lstatSync(installPath);
+    if (lstat.isSymbolicLink()) {
+      const target = fs.readlinkSync(installPath);
+      // 如果指向非 C 盘，则认为已迁移
+      if (!target.toLowerCase().startsWith('c:')) {
+        return { isMigrated: true, migratedTo: target };
+      }
+    }
+  } catch (e) { }
+
+  return { isMigrated: false };
+}

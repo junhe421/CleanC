@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,6 +27,7 @@
       box-sizing: border-box;
       clear: both;
     }
+
     .next-wave-logo-lg {
       width: 200px;
       height: auto;
@@ -33,43 +35,53 @@
       display: block;
       margin: 0 auto;
     }
+
     .wechat-qrcode-img {
       max-width: 130px;
       max-height: 130px;
       object-fit: contain;
     }
-    .brand-section, .wechat-section {
+
+    .brand-section,
+    .wechat-section {
       flex: 1;
       min-width: 280px;
       padding: 15px;
       margin: 10px;
       text-align: center;
     }
+
     .brand-section .brand-title {
       text-align: center;
       margin-bottom: 10px;
       font-weight: bold;
       color: #333;
     }
+
     .brand-section .brand-description {
       text-align: left;
       margin-top: 15px;
     }
+
     .wechat-section {
       background-color: #f8f8f8;
       border-radius: 8px;
       text-align: center;
     }
+
     @media (max-width: 768px) {
       .dashboard-footer {
         flex-direction: column;
         align-items: center;
       }
-      .brand-section, .wechat-section {
+
+      .brand-section,
+      .wechat-section {
         width: 100%;
         text-align: center;
       }
     }
+
     .about-btn {
       background-color: #1976D2;
       color: white;
@@ -84,11 +96,12 @@
       width: fit-content;
       margin: 20px auto 10px;
     }
+
     .about-btn:hover {
       background-color: #1565C0;
       transform: translateY(-2px);
     }
-    
+
     /* 侧边栏品牌和公众号样式 */
     .sidebar-brand {
       padding: 10px 15px;
@@ -97,13 +110,13 @@
       border-top: 1px solid rgba(224, 224, 224, 0.5);
       padding-top: 15px;
     }
-    
+
     .sidebar-brand-title {
       font-size: 12px;
       color: #666;
       margin-bottom: 6px;
     }
-    
+
     .sidebar-logo {
       width: 180px;
       height: auto;
@@ -114,11 +127,11 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-    
+
     .sidebar-logo:hover {
       transform: scale(1.05);
     }
-    
+
     .sidebar-wechat {
       display: flex;
       align-items: center;
@@ -132,17 +145,17 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-    
+
     .sidebar-wechat:hover {
       background-color: #07A600;
       transform: translateY(-1px);
     }
-    
+
     .sidebar-wechat i {
       margin-right: 5px;
       font-size: 15px;
     }
-    
+
     .sidebar-footer {
       padding: 15px 0;
       margin-top: auto;
@@ -150,7 +163,7 @@
       flex-direction: column;
       gap: 5px;
     }
-    
+
     .dashboard-about-btn-container {
       display: flex;
       justify-content: center;
@@ -158,6 +171,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="app-container">
     <!-- 侧边导航栏 -->
@@ -183,6 +197,10 @@
           <i class="fas fa-copy"></i>
           <span data-i18n="nav.duplicateFiles">重复文件</span>
         </li>
+        <li class="nav-item" data-tab="app-migration">
+          <i class="fas fa-truck-moving"></i>
+          <span data-i18n="nav.appMigration">软件搬家</span>
+        </li>
         <li class="nav-item" data-tab="uninstall">
           <i class="fas fa-trash-alt"></i>
           <span data-i18n="nav.uninstall">程序卸载</span>
@@ -194,15 +212,15 @@
           <div class="sidebar-brand-title" data-i18n="footer.technicalSupport">技术支持</div>
           <img src="./assets/next-wave-logo.png" alt="Next Wave" class="sidebar-logo" id="sidebar-brand-logo">
         </div>
-        
+
         <!-- 添加公众号信息 -->
         <div class="sidebar-wechat" id="sidebar-wechat">
           <i class="fab fa-weixin"></i>
           <span data-i18n="footer.wechatAccount">查看公众号</span>
         </div>
-        
+
         <p style="margin: 5px 0;" data-i18n="footer.designedFor">为电脑小白设计</p>
-        <p style="margin: 5px 0;" data-i18n="footer.version">版本 1.0.0</p>
+        <p style="margin: 5px 0;" data-i18n="footer.version">版本 1.1.0</p>
       </div>
     </div>
 
@@ -212,7 +230,7 @@
       <div class="content-tab active" id="dashboard">
         <div class="header">
           <h2 data-i18n="dashboard.title">欢迎使用 CleanC 清理工具</h2>
-                          <p data-i18n="dashboard.subtitle">快速安全地清理您的C盘，释放宝贵空间</p>
+          <p data-i18n="dashboard.subtitle">快速安全地清理您的C盘，释放宝贵空间</p>
         </div>
 
         <div class="disk-info-card">
@@ -245,6 +263,11 @@
           <h3 data-i18n="dashboard.quickTips">快速小贴士</h3>
           <div class="tips-container">
             <div class="tip-card">
+              <i class="fas fa-truck-moving" style="color: #2196F3;"></i>
+              <h4 data-i18n="dashboard.tipNewTitle">新功能：软件搬家</h4>
+              <p data-i18n="dashboard.tipNewContent">C盘爆满？一键把软件搬到D盘，释放空间不重装！</p>
+            </div>
+            <div class="tip-card">
               <i class="fas fa-lightbulb"></i>
               <h4 data-i18n="dashboard.tip1Title">定期清理临时文件</h4>
               <p data-i18n="dashboard.tip1Content">临时文件会占用大量空间，建议每周清理一次</p>
@@ -253,11 +276,6 @@
               <i class="fas fa-exclamation-circle"></i>
               <h4 data-i18n="dashboard.tip2Title">注意备份重要文件</h4>
               <p data-i18n="dashboard.tip2Content">清理前请确保重要文件已备份</p>
-            </div>
-            <div class="tip-card">
-              <i class="fas fa-star"></i>
-              <h4 data-i18n="dashboard.tip3Title">卸载不用的程序</h4>
-              <p data-i18n="dashboard.tip3Content">卸载长期不用的程序可以释放更多空间</p>
             </div>
           </div>
         </div>
@@ -312,8 +330,8 @@
           <div class="placeholder-icon">
             <i class="fas fa-search"></i>
           </div>
-                          <h3 data-i18n="quickClean.scanTitle">点击下方按钮开始扫描</h3>
-                <p data-i18n="quickClean.scanDesc">我们将安全地分析您的系统并找出可以清理的文件</p>
+          <h3 data-i18n="quickClean.scanTitle">点击下方按钮开始扫描</h3>
+          <p data-i18n="quickClean.scanDesc">我们将安全地分析您的系统并找出可以清理的文件</p>
           <button class="primary-btn" id="start-quick-scan-btn">
             <i class="fas fa-bolt"></i> <span data-i18n="quickClean.startScanBtn">开始扫描</span>
           </button>
@@ -403,7 +421,8 @@
               <option value="music" data-i18n="duplicateFiles.folderMusic">音乐</option>
               <option value="custom" data-i18n="duplicateFiles.folderCustom">自定义...</option>
             </select>
-            <input type="text" id="custom-path" data-i18n-placeholder="duplicateFiles.customPathPlaceholder" placeholder="输入自定义路径...">
+            <input type="text" id="custom-path" data-i18n-placeholder="duplicateFiles.customPathPlaceholder"
+              placeholder="输入自定义路径...">
           </div>
           <button class="primary-btn" id="find-duplicates-btn">
             <i class="fas fa-search"></i> <span data-i18n="duplicateFiles.startSearchBtn">查找重复文件</span>
@@ -423,6 +442,37 @@
         </div>
       </div>
 
+      <!-- 软件搬家 (商业化核心功能) -->
+      <div class="content-tab" id="app-migration">
+        <div class="header">
+          <h2 data-i18n="appMigration.title">软件搬家 <span class="badge-new">NEW</span></h2>
+          <p data-i18n="appMigration.description">C盘满了？一键将软件无损迁移到其他磁盘，无需重装！</p>
+        </div>
+
+        <div class="app-list-container">
+          <div class="app-filter">
+            <!-- 专门针对大软件的快速筛选 -->
+            <div class="filter-chips">
+              <span class="chip active" data-filter="all" data-i18n="appMigration.filterAll">全部软件</span>
+              <span class="chip" data-filter="large" data-i18n="appMigration.filterLarge">大软件 (>1GB)</span>
+              <span class="chip recommend-chip" data-filter="chat" data-i18n="appMigration.filterRecommend">推荐:
+                微信/QQ</span>
+            </div>
+            <button class="secondary-btn" id="refresh-migration-apps">
+              <i class="fas fa-sync-alt"></i> <span data-i18n="common.refresh">刷新列表</span>
+            </button>
+          </div>
+
+          <!-- 迁移列表 -->
+          <div class="app-list migration-list" id="migration-apps-list">
+            <div class="loading-apps">
+              <i class="fas fa-truck-moving fa-bounce"></i>
+              <p data-i18n="appMigration.scanning">正在扫描C盘可迁移软件...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- 程序卸载 -->
       <div class="content-tab" id="uninstall">
         <div class="header">
@@ -432,7 +482,8 @@
 
         <div class="app-list-container">
           <div class="app-filter">
-            <input type="text" id="app-search" data-i18n-placeholder="uninstall.searchPlaceholder" placeholder="搜索程序...">
+            <input type="text" id="app-search" data-i18n-placeholder="uninstall.searchPlaceholder"
+              placeholder="搜索程序...">
             <select id="app-sort" data-i18n-title="uninstall.sortBy" title="排序方式">
               <option value="name" data-i18n="uninstall.sortByName">按名称排序</option>
               <option value="size" data-i18n="uninstall.sortBySize">按大小排序</option>
@@ -493,10 +544,10 @@
             <div class="app-version" data-i18n="about.version">版本 1.0.0</div>
             <div class="app-description">
               <p data-i18n="about.description">CleanC是一款专为电脑初学者设计的C盘清理与优化工具。它提供了比市面上同类产品更快速、
-              界面更直观友好的体验，让用户能够安全、轻松地管理和释放C盘空间。</p>
+                界面更直观友好的体验，让用户能够安全、轻松地管理和释放C盘空间。</p>
             </div>
           </div>
-          
+
           <div class="brand-section">
             <div class="brand-title" data-i18n="about.techProvider">技术提供</div>
             <div style="text-align: center; width: 100%; display: flex; justify-content: center; margin: 15px 0;">
@@ -504,10 +555,10 @@
             </div>
             <div class="brand-description">
               <p data-i18n="about.companyDesc">Next Wave 是一家专注于创新软件解决方案的技术公司，致力于打造简单易用、功能强大的应用程序。
-              我们相信科技应该让生活变得更简单，而不是更复杂。</p>
+                我们相信科技应该让生活变得更简单，而不是更复杂。</p>
             </div>
           </div>
-          
+
           <div class="wechat-section">
             <div class="wechat-title">
               <i class="fab fa-weixin"></i>
@@ -525,7 +576,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="about-footer">
             <div class="copyright" data-i18n="about.copyright">© 2025 Next Wave. 保留所有权利。</div>
           </div>
@@ -540,11 +591,11 @@
   <script src="./src/js/i18n.js"></script>
   <!-- 应用脚本 -->
   <script src="./src/js/renderer.js"></script>
-  
+
   <!-- 初始化国际化 -->
   <script>
     // 在DOM加载完成后初始化国际化
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // 稍微延迟初始化，确保所有元素都已加载
       setTimeout(() => {
         window.i18n.init();
@@ -552,4 +603,5 @@
     });
   </script>
 </body>
-</html> 
+
+</html>

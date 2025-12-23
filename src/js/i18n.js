@@ -23,17 +23,18 @@ class I18n {
       // 应用标题和基本信息
       appTitle: 'CleanC - 简单易用的C盘清理工具',
       appName: 'CleanC',
-      
+
       // 导航菜单
       nav: {
         dashboard: '主页',
         quickClean: '快速清理',
         largeFiles: '大文件查找',
         duplicateFiles: '重复文件',
+        appMigration: '软件搬家',
         uninstall: '程序卸载'
       },
-      
-            // 主页面板
+
+      // 主页面板
       dashboard: {
         title: '欢迎使用 CleanC 清理工具',
         subtitle: '快速安全地清理您的C盘，释放宝贵空间',
@@ -53,7 +54,7 @@ class I18n {
         tip3Title: '卸载不用的程序',
         tip3Content: '卸载长期不用的程序可以释放更多空间'
       },
-      
+
       // 快速清理
       quickClean: {
         title: '快速清理',
@@ -81,7 +82,7 @@ class I18n {
           recycleBin: '回收站'
         }
       },
-      
+
       // 大文件查找
       largeFiles: {
         title: '大文件查找',
@@ -104,7 +105,7 @@ class I18n {
         deleteSuccess: '文件删除成功',
         deleteError: '文件删除失败'
       },
-      
+
       // 重复文件
       duplicateFiles: {
         title: '重复文件查找',
@@ -131,10 +132,33 @@ class I18n {
         folderMusic: '音乐',
         folderCustom: '自定义...',
         customPathPlaceholder: '输入自定义路径...',
-        searchPath: '搜索路径:',
         placeholderDesc: '选择要扫描的文件夹，然后点击上方按钮开始查找'
       },
-      
+
+      // 软件搬家
+      appMigration: {
+        title: '软件搬家',
+        description: 'C盘满了？一键将软件无损迁移到其他磁盘，无需重装！',
+        scanning: '正在扫描C盘软件...',
+        migrateBtn: '一键搬家',
+        filterAll: '全部软件',
+        filterLarge: '大软件 (>1GB)',
+        filterRecommend: '推荐: 微信/QQ',
+        recommend: '推荐',
+        largeApp: '大软件',
+        migrated: '已搬家',
+        selectTargetDrive: '请选择目标磁盘',
+        migrationConfirmTitle: '确定要搬家吗？',
+        migrationConfirmContent: '确定要将 "{appName}" 迁移吗？\n\n这会将它从 C 盘移动到您指定的磁盘，并自动创建链接。\n\n⚠️ 重要：迁移期间请确保该软件已彻底关闭！',
+        migrationSuccessTitle: '搬家成功！',
+        migrationSuccessContent: '"{appName}" 已成功移动到 {targetPath}。\n\n我们已在原位置创建了"传送门"(Junction)，您的软件可以正常使用了！',
+        migrationFailedTitle: '搬家失败',
+        checkFileUsage: '建议手动检查是否有文件正在被使用。',
+        targetDriveSpace: '目标盘空间',
+        spaceRequired: '需要空间',
+        spaceAvailable: '可用空间'
+      },
+
       // 程序卸载
       uninstall: {
         title: '程序卸载管理',
@@ -169,12 +193,13 @@ class I18n {
         unknownDate: '未知日期',
         unknownSize: '未知大小'
       },
-      
+
       // 通用按钮和消息
       common: {
         ok: '确定',
         cancel: '取消',
         close: '关闭',
+        refresh: '刷新',
         save: '保存',
         delete: '删除',
         loading: '加载中...',
@@ -204,7 +229,7 @@ class I18n {
         cannotUninstall: '抱歉，无法卸载',
         noUninstallCommand: '未找到卸载命令。'
       },
-      
+
       // 底部信息
       footer: {
         technicalSupport: '技术支持',
@@ -213,14 +238,14 @@ class I18n {
         designedFor: '为电脑小白设计',
         version: '版本 1.0.0'
       },
-      
+
       // 语言切换
       language: {
         switchLanguage: '切换语言',
         chinese: '中文',
         english: 'English'
       },
-      
+
       // 关于对话框
       about: {
         title: '关于 CleanC',
@@ -239,17 +264,18 @@ class I18n {
       // Application title and basic info
       appTitle: 'CleanC - Ultimate C Drive Cleaner for Beginners',
       appName: 'CleanC',
-      
+
       // Navigation menu
       nav: {
         dashboard: 'Dashboard',
         quickClean: 'Quick Clean',
         largeFiles: 'Large Files',
         duplicateFiles: 'Duplicate Files',
+        appMigration: 'App Migration',
         uninstall: 'Uninstall Programs'
       },
-      
-            // Dashboard panel
+
+      // Dashboard panel
       dashboard: {
         title: 'Welcome to CleanC Disk Cleaner',
         subtitle: 'Quickly and safely clean your C drive, free up precious space',
@@ -269,7 +295,7 @@ class I18n {
         tip3Title: 'Uninstall Unused Programs',
         tip3Content: 'Uninstalling programs you no longer use can free up more space'
       },
-      
+
       // Quick clean
       quickClean: {
         title: 'Quick Clean',
@@ -297,7 +323,7 @@ class I18n {
           recycleBin: 'Recycle Bin'
         }
       },
-      
+
       // Large files
       largeFiles: {
         title: 'Large Files Finder',
@@ -320,7 +346,7 @@ class I18n {
         deleteSuccess: 'File deleted successfully',
         deleteError: 'Failed to delete file'
       },
-      
+
       // Duplicate files
       duplicateFiles: {
         title: 'Duplicate Files Finder',
@@ -347,10 +373,33 @@ class I18n {
         folderMusic: 'Music',
         folderCustom: 'Custom...',
         customPathPlaceholder: 'Enter custom path...',
-        searchPath: 'Search Path:',
         placeholderDesc: 'Select the folder to scan, then click the button above to start searching'
       },
-      
+
+      // App Migration
+      appMigration: {
+        title: 'App Migration',
+        description: 'C drive full? Move apps to another drive without reinstalling!',
+        scanning: 'Scanning C drive apps...',
+        migrateBtn: 'Move App',
+        filterAll: 'All Apps',
+        filterLarge: 'Large Apps (>1GB)',
+        filterRecommend: 'Recommended: WeChat/QQ',
+        recommend: 'Recommended',
+        largeApp: 'Large App',
+        migrated: 'Migrated',
+        selectTargetDrive: 'Select Target Drive',
+        migrationConfirmTitle: 'Confirm Migration',
+        migrationConfirmContent: 'Are you sure you want to move "{appName}"?\n\nThis will move it from drive C to your selected drive and create a junction link.\n\n⚠️ Important: Please ensure the app is closed!',
+        migrationSuccessTitle: 'Migration Successful!',
+        migrationSuccessContent: '"{appName}" has been successfully moved to {targetPath}.\n\nWe created a "Junction" at the original location, so your app works as usual!',
+        migrationFailedTitle: 'Migration Failed',
+        checkFileUsage: 'Please check if any files are in use.',
+        targetDriveSpace: 'Target Drive Space',
+        spaceRequired: 'Required',
+        spaceAvailable: 'Available'
+      },
+
       // Program uninstall
       uninstall: {
         title: 'Program Uninstall Manager',
@@ -385,12 +434,13 @@ class I18n {
         unknownDate: 'Unknown Date',
         unknownSize: 'Unknown Size'
       },
-      
+
       // Common buttons and messages
       common: {
         ok: 'OK',
         cancel: 'Cancel',
         close: 'Close',
+        refresh: 'Refresh',
         save: 'Save',
         delete: 'Delete',
         loading: 'Loading...',
@@ -420,7 +470,7 @@ class I18n {
         cannotUninstall: 'Sorry, cannot uninstall',
         noUninstallCommand: ', uninstall command not found.'
       },
-      
+
       // Footer info
       footer: {
         technicalSupport: 'Technical Support',
@@ -429,14 +479,14 @@ class I18n {
         designedFor: 'Designed for Beginners',
         version: 'Version 1.0.0'
       },
-      
+
       // Language switching
       language: {
         switchLanguage: 'Switch Language',
         chinese: '中文',
         english: 'English'
       },
-      
+
       // About dialog
       about: {
         title: 'About CleanC',
@@ -455,7 +505,7 @@ class I18n {
   t(key) {
     const keys = key.split('.');
     let translation = this.translations[this.currentLanguage];
-    
+
     for (const k of keys) {
       if (translation && translation[k]) {
         translation = translation[k];
@@ -472,7 +522,7 @@ class I18n {
         break;
       }
     }
-    
+
     return translation || key;
   }
 
@@ -495,16 +545,16 @@ class I18n {
   updatePageTranslations() {
     // 更新文档标题
     document.title = this.t('appTitle');
-    
+
     // 更新HTML lang属性
     document.documentElement.lang = this.currentLanguage;
-    
+
     // 更新所有带有 data-i18n 属性的元素
     const elements = document.querySelectorAll('[data-i18n]');
     elements.forEach(element => {
       const key = element.getAttribute('data-i18n');
       const translation = this.t(key);
-      
+
       if (element.tagName === 'INPUT' && element.type === 'text') {
         element.placeholder = translation;
       } else {
@@ -663,11 +713,11 @@ class I18n {
         const lang = option.getAttribute('data-lang');
         if (lang !== this.currentLanguage) {
           this.switchLanguage(lang);
-          
+
           // 更新按钮显示
           const btnText = switcherBtn.querySelector('span');
           btnText.textContent = lang === 'zh-CN' ? '中文' : 'English';
-          
+
           // 更新选项状态
           options.forEach(opt => opt.classList.remove('active'));
           option.classList.add('active');
