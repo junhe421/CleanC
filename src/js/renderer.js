@@ -3390,10 +3390,12 @@ function renderMigrationList(apps) {
     // 按钮样式和逻辑
     let buttonHtml = '';
     if (isMigrated) {
-      // 已搬家状态按钮
+      // 已搬家状态按钮 - 提供还原功能
       buttonHtml = `
-        <button class=\"primary-btn migrate-btn\" style=\"background-color: #4CAF50; cursor: default; opacity: 0.8;\" disabled>
-          <i class=\"fas fa-check-circle\"></i> ${i18n.t('appMigration.migrated')} (${targetDriveLetter}:)
+        <button class="primary-btn restore-btn" style="background-color: #4CAF50; border-color: #4CAF50;" 
+          onclick="startAppRestore('${encodeURIComponent(JSON.stringify(app))}')">
+          <i class="fas fa-undo-alt"></i> 还原至 C 盘
+          <div style="font-size: 10px; opacity: 0.8; margin-top: 2px;">当前: ${targetDriveLetter}:</div>
         </button>
       `;
     } else {
@@ -3653,4 +3655,52 @@ async function executeAppMigration(app, targetDriveMounted) {
     if (document.body.contains(loadingModal)) document.body.removeChild(loadingModal);
     alert(`${t('common.error')}: ${error.message}`);
   }
-} 
+};
+
+// 添加全局还原函数
+window.startAppRestore = async function (appStr) {
+  try {
+    const app = JSON.parse(decodeURIComponent(appStr));
+
+    // 二次确认
+    if (!confirm(`确定要将【${app.name}】的数据还原回 C 盘原位置吗？\n\n这会将数据从 ${app.migratedTo} 移回 ${app.installPath}。\n请确保 C 盘有足够的空间。`)) {
+      return;
+    }
+
+    // 显示处理中状态
+    // 如果 showLoading 不可用，创建一个临时的
+    let loadingId;
+    if (typeof showLoading === 'function') {
+      loadingId = showLoading(`正在还原 ${app.name}，请稍候...<br>数据量可能较大，请耐心等待`);
+    } else {
+      // 简单的fallback
+      document.body.style.cursor = 'wait';
+    }
+
+    // 调用后端接口
+    const result = await ipcRenderer.invoke('restore-app', app);
+
+    if (typeof hideLoading === 'function' && loadingId) {
+      hideLoading(loadingId);
+    } else {
+      document.body.style.cursor = 'default';
+    }
+
+    if (result.success) {
+      alert(`还原成功！\n\n${app.name} 已成功移回 C 盘。\n所有功能（如软件快捷方式、开始菜单等）均可正常使用。`);
+      // 刷新列表
+      if (typeof loadMigrationApps === 'function') {
+        loadMigrationApps(true);
+      } else {
+        location.reload();
+      }
+    } else {
+      alert(`还原失败: ${result.error}`);
+    }
+
+  } catch (err) {
+    console.error('还原操作异常:', err);
+    alert('操作发生错误: ' + err.message);
+    document.body.style.cursor = 'default';
+  }
+};

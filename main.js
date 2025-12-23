@@ -8,6 +8,44 @@ const nodeDiskInfo = require('node-disk-info');
 // 保持对window对象的全局引用，避免JavaScript对象被垃圾回收时，窗口自动关闭
 let mainWindow;
 
+// ==================== 通用工具函数 ====================
+
+/**
+ * 强制终止与指定路径相关的进程
+ * 用于微信、QQ等应用的迁移/还原前清理
+ */
+function killRelatedProcesses(appPath) {
+  try {
+    const pathLower = appPath.toLowerCase();
+
+    // 微信相关进程
+    if (pathLower.includes('wechat') || pathLower.includes('weixin')) {
+      console.log('检测到微信路径，尝试终止微信进程...');
+      try {
+        execSync('taskkill /F /IM WeChat.exe', { stdio: 'ignore' });
+        execSync('taskkill /F /IM WeChatAppEx.exe', { stdio: 'ignore' });
+        console.log('微信进程已终止');
+      } catch (e) {
+        // 进程可能本来就没运行，忽略错误
+      }
+    }
+
+    // QQ相关进程
+    if (pathLower.includes('tencent') && pathLower.includes('qq')) {
+      console.log('检测到QQ路径，尝试终止QQ进程...');
+      try {
+        execSync('taskkill /F /IM QQ.exe', { stdio: 'ignore' });
+        execSync('taskkill /F /IM QQProtect.exe', { stdio: 'ignore' });
+        console.log('QQ进程已终止');
+      } catch (e) {
+        // 进程可能本来就没运行，忽略错误
+      }
+    }
+  } catch (error) {
+    console.warn('进程终止过程中出现异常:', error.message);
+  }
+}
+
 function createWindow() {
   // 创建浏览器窗口
   mainWindow = new BrowserWindow({
@@ -2151,6 +2189,130 @@ ipcMain.handle('migrate-folder', async (event, { sourcePath, targetDrive }) => {
   } catch (error) {
     console.error('文件夹迁移失败:', error);
     return { success: false, error: error.message };
+  }
+});
+
+// 还原已迁移的应用/数据 (商业化核心 - 用户信心保障)
+ipcMain.handle('restore-app', async (event, app) => {
+  try {
+    const sourcePath = app.installPath || app.installLocation;  // C盘原路径（Junction）
+    const targetPath = app.migratedTo;  // D盘现路径（真实数据）
+
+    console.log(`========== 开始还原应用 ==========`);
+    console.log(`应用名称: ${app.name}`);
+    console.log(`C盘Junction路径: ${sourcePath}`);
+    console.log(`D盘真实数据路径: ${targetPath}`);
+
+    // 安全检查
+    if (!sourcePath || !targetPath) {
+      throw new Error('路径信息不完整，无法执行还原操作');
+    }
+
+    if (!fs.existsSync(sourcePath)) {
+      throw new Error('C盘原位置不存在，可能已被手动删除');
+    }
+
+    if (!fs.existsSync(targetPath)) {
+      throw new Error('目标数据文件夹不存在，无法还原');
+    }
+
+    // 1. 强制终止相关进程（微信/QQ等）
+    killRelatedProcesses(sourcePath);
+    await new Promise(resolve => setTimeout(resolve, 1000)); // 等待1秒确保进程完全关闭
+
+    // 2. 验证C盘路径是Junction
+    const lstat = fs.lstatSync(sourcePath);
+    if (!lstat.isSymbolicLink()) {
+      throw new Error('原位置不是符号链接（Junction），可能数据从未被迁移，无法执行还原');
+    }
+
+    console.log('✓ 验证通过：C盘路径确实是Junction');
+
+    // 3. 删除C盘的Junction（rmdir在Windows下删除Junction不会影响目标数据）
+    console.log('正在删除Junction...');
+    try {
+      execSync(`rmdir "${sourcePath}"`, { encoding: 'utf8' });
+      console.log('✓ Junction已删除');
+    } catch (rmdirError) {
+      throw new Error(`删除Junction失败: ${rmdirError.message}`);
+    }
+
+    // 4. 将文件从D盘移回C盘
+    console.log('正在将文件从D盘移回C盘（使用robocopy /MOVE）...');
+
+    const moveCmd = `robocopy "${targetPath}" "${sourcePath}" /MOVE /E /COPYALL /ZB /MT:16 /NFL /NDL /NJH /NJS`;
+
+    try {
+      execSync(moveCmd, { encoding: 'utf8', stdio: 'ignore' });
+    } catch (robocopyError) {
+      // Robocopy的exit code含义：
+      // 0 = 没有文件被复制
+      // 1 = 所有文件成功复制
+      // 2 = 有额外文件或目录被检测到
+      // 4 = 有不匹配的文件或目录
+      // 8及以上 = 失败
+      const exitCode = robocopyError.status || 0;
+      if (exitCode >= 8) {
+        throw new Error(`文件移动失败 (Robocopy错误代码: ${exitCode})`);
+      }
+      console.log(`Robocopy完成，退出码: ${exitCode}`);
+    }
+
+    console.log('✓ 文件已移回C盘');
+
+    // 5. 验证C盘路径现在包含真实数据
+    if (!fs.existsSync(sourcePath)) {
+      throw new Error('严重错误：文件移动看似成功但C盘路径未找到');
+    }
+
+    const restoredStats = fs.lstatSync(sourcePath);
+    if (restoredStats.isSymbolicLink()) {
+      throw new Error('严重错误：C盘路径仍然是符号链接，还原失败');
+    }
+
+    console.log('✓ 验证通过：C盘现在包含真实数据');
+
+    // 6. 清理D盘残留的空目录（可选，递归向上清理CleanC_Migrated下的空目录）
+    try {
+      // 检查D盘路径是否存在且为空
+      if (fs.existsSync(targetPath)) {
+        const remainingFiles = fs.readdirSync(targetPath);
+        if (remainingFiles.length === 0) {
+          fs.rmdirSync(targetPath);
+          console.log(`✓ 已清理空目录: ${targetPath}`);
+
+          // 尝试清理父目录（如果为空）
+          let parentDir = path.dirname(targetPath);
+          while (parentDir.includes('CleanC_Migrated') && fs.existsSync(parentDir)) {
+            const parentFiles = fs.readdirSync(parentDir);
+            if (parentFiles.length === 0) {
+              fs.rmdirSync(parentDir);
+              console.log(`✓ 已清理空父目录: ${parentDir}`);
+              parentDir = path.dirname(parentDir);
+            } else {
+              break;
+            }
+          }
+        }
+      }
+    } catch (cleanupError) {
+      console.warn('清理空目录时出现警告（不影响还原）:', cleanupError.message);
+    }
+
+    console.log(`========== 还原完成 ==========`);
+
+    return {
+      success: true,
+      message: `${app.name} 已成功还原到C盘原位置`,
+      restoredPath: sourcePath
+    };
+
+  } catch (error) {
+    console.error('还原应用失败:', error);
+    return {
+      success: false,
+      error: error.message
+    };
   }
 });
 
