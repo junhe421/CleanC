@@ -3219,10 +3219,23 @@ async function loadMigrationApps(forceRefresh = false) {
       // 1. 必须有有效的 C 盘路径
       // 2. 排除系统组件和驱动程序 (简单的排除列表)
       // 3. 排除 Windows 目录下的东西
-      if (!app.installPath) return false;
+      if (!app.installPath) {
+        if (app.name && (app.name.includes('微信') || app.name.includes('WeChat'))) {
+          console.log('微信被过滤: 无安装路径', app);
+        }
+        return false;
+      }
 
       const pathUpper = app.installPath.toUpperCase();
-      if (!pathUpper.startsWith('C:')) return false;
+      if (!pathUpper.startsWith('C:')) {
+        // 关键修正：如果应用已经标记为“已搬家”或者是“特殊数据”（如异地存储的微信），则允许显示
+        if (!app.isMigrated && !app.isSpecialData) {
+          if (app.name.includes('微信') || app.name.includes('WeChat')) {
+            console.log('微信被过滤: 非C盘且未标记已迁移', app);
+          }
+          return false;
+        }
+      }
       if (pathUpper.includes('\\WINDOWS\\')) return false;
       if (pathUpper.includes('\\MICROSOFT\\EDGE\\')) return false;
       // 过滤掉小于 10MB 的小软件，避免列表过于杂乱
@@ -3276,8 +3289,10 @@ async function loadMigrationApps(forceRefresh = false) {
 // 猜测软件安装路径
 function guessInstallPath(app) {
   // 如果后端以后提供了 InstallLocation，优先使用
-  if (app.InstallLocation && app.InstallLocation.length > 2) {
-    return app.InstallLocation;
+  // 兼容大小写
+  const loc = app.installLocation || app.InstallLocation;
+  if (loc && loc.length > 2) {
+    return loc;
   }
 
   // 从卸载字符串中解析
@@ -3349,6 +3364,9 @@ function renderMigrationList(apps) {
       if (match) targetDriveLetter = match[1].toUpperCase();
     }
 
+    // 特殊数据应用 (WeChat/QQ Data)
+    const isSpecialData = app.isSpecialData;
+
     const item = document.createElement('div');
     item.className = 'app-item migration-item';
     // 复用 app-item 样式的基础，添加一些自定义微调
@@ -3387,14 +3405,26 @@ function renderMigrationList(apps) {
       `;
     }
 
-    item.innerHTML = `
+    // 构建图标
+    let iconHtml = '';
+    if (isSpecialData && app.iconHint === 'wechat') {
+      iconHtml = `<div class="app-icon" style="width: 48px; height: 48px; background-color: #07C160; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-right: 15px;"><i class="fab fa-weixin"></i></div>`;
+    } else if (isSpecialData && app.iconHint === 'qq') {
+      iconHtml = `<div class="app-icon" style="width: 48px; height: 48px; background-color: #12B7F5; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-right: 15px;"><i class="fab fa-qq"></i></div>`;
+    } else {
+      iconHtml = `
       <div class=\"app-icon\" style=\"width: 48px; height: 48px; background-color: ${stringToColor(app.name)}; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 15px; font-weight: bold;\">
         ${app.name.charAt(0).toUpperCase()}
-      </div>
+      </div>`;
+    }
+
+    item.innerHTML = `
+      ${iconHtml}
       <div class=\"app-info\" style=\"flex: 1;\">
         <div class=\"app-name\" style=\"font-weight: bold; font-size: 16px; margin-bottom: 5px;\">
           ${app.name}
           ${isMigrated ? `<span style="background-color: #E8F5E9; color: #2E7D32; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">${i18n.t('appMigration.migrated')}</span>` : ''}
+          ${isSpecialData ? `<span style="background-color: #E3F2FD; color: #1976D2; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-left: 8px; border: 1px solid #BBDEFB;">DATA</span>` : ''}
           ${isRecommended && !isMigrated ? `<span style="background-color: #E8F5E9; color: #2E7D32; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">${i18n.t('appMigration.recommend')}</span>` : ''}
           ${isLarge && !isMigrated ? `<span style="background-color: #FFF3E0; color: #EF6C00; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">${i18n.t('appMigration.largeApp')}</span>` : ''}
         </div>

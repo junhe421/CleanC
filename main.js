@@ -959,17 +959,178 @@ ipcMain.handle('get-installed-apps', async () => {
       });
 
       console.log(`已格式化 ${formattedRegApps.length} 个应用程序的大小信息`);
+
+      // --- 注入特殊数据目录 (WeChat/QQ 聊天记录) ---
+      try {
+        const specialApps = detectSpecialDataApps();
+        if (specialApps.length > 0) {
+          console.log(`检测到 ${specialApps.length} 个特殊数据目录`);
+          // 对特殊应用进行状态检查，但保留已有的 isMigrated 状态
+          const formattedSpecialApps = specialApps.map(app => {
+            // 如果 app 已经有明确的 isMigrated 状态（在 detectSpecialDataApps 中设置的），
+            // 则不调用 checkMigrationStatus 以避免覆盖
+            if (app.hasOwnProperty('isMigrated')) {
+              return app;
+            }
+            return {
+              ...app,
+              ...checkMigrationStatus(app)
+            };
+          });
+          // 合并列表
+          formattedRegApps.push(...formattedSpecialApps);
+        }
+      } catch (specialErr) {
+        console.error('检测特殊数据目录失败:', specialErr);
+      }
+      // -------------------------------------------
+
       return formattedRegApps;
     }
 
     // 如果所有方法都失败，使用模拟数据
-    console.log('所有方法均未获取到应用程序，使用模拟数据');
-    return getMockAppsList();
+    if (formattedRegApps.length === 0) {
+      console.log('所有方法均未获取到应用程序，使用模拟数据');
+      return getMockAppsList();
+    }
+
+
+
+    return formattedRegApps.sort((a, b) => a.name.localeCompare(b.name));
+
   } catch (error) {
     console.error('获取已安装程序列表出错:', error);
     return getMockAppsList();
   }
 });
+
+// 辅助函数：尝试从注册表获取微信真实数据路径
+function getWeChatPathFromRegistry() {
+  const registryKeys = [
+    'HKCU\\Software\\Tencent\\WeChat',
+    'HKLM\\SOFTWARE\\Tencent\\WeChat',
+    'HKLM\\SOFTWARE\\WOW6432Node\\Tencent\\WeChat'
+  ];
+
+  for (const key of registryKeys) {
+    try {
+      // 这里的策略改变：不指定 /v FileSavePath，而是查询所有项
+      // 这样如果键名变了（比如变成 FileSavePath_New 或其他），我们也能看到
+      const stdout = execSync(`reg query "${key}"`, {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore']
+      });
+
+      // 尝试在输出中寻找任何看起来像路径的字符串 (包含 :\)
+      const lines = stdout.split('\n');
+      for (const line of lines) {
+        // 匹配像 "FileSavePath    REG_SZ    F:\xwechat_files" 这样的行
+        // 或者即使键名不是 FileSavePath，但值是路径
+        const match = line.match(/\s+REG_SZ\s+(.*)/i);
+        if (match && match[1]) {
+          let val = match[1].trim();
+          // 简单的路径验证：包含 ":\" 且不是系统路径
+          if (val.includes(':\\') && !val.toLowerCase().includes('windows')) {
+            console.log(`在注册表 ${key} 中发现潜在路径: ${val}`);
+            return val;
+          }
+          if (val === 'MyDocument:') {
+            return path.join(app.getPath('documents'), 'WeChat Files');
+          }
+        }
+      }
+    } catch (e) {
+      // 当前 Key 失败
+    }
+  }
+
+  // 方案3: 尝试使用 PowerShell 直接读取 (兜底方案)
+  try {
+    const psCommand = `Get-ItemProperty -Path "HKCU:\\Software\\Tencent\\WeChat" -Name "FileSavePath" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FileSavePath`;
+    const stdout = execSync(`powershell -NoProfile -Command "${psCommand}"`, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore']
+    });
+    if (stdout && stdout.trim()) {
+      let val = stdout.trim();
+      console.log(`成功通过 PowerShell 读取到微信路径: ${val}`);
+      if (val === 'MyDocument:') {
+        return path.join(app.getPath('documents'), 'WeChat Files');
+      } else {
+        return val;
+      }
+    }
+  } catch (e) {
+    // console.log('PowerShell 读取注册表失败');
+  }
+
+  console.log('所有注册表路径尝试完毕，未能找到微信自定义路径');
+  return null;
+}
+
+// 检测特殊数据目录（微信/QQ聊天记录）
+function detectSpecialDataApps() {
+  const specialApps = [];
+  try {
+    const documentsPath = app.getPath('documents');
+    console.log(`正在探测特殊数据目录，文档路径: ${documentsPath}`);
+
+    // 1. 微信数据目录
+    // 优先尝试注册表，如果失败则回退到默认文档路径
+    let wechatPath = getWeChatPathFromRegistry();
+    let wechatSource = 'Registry';
+
+    if (!wechatPath) {
+      wechatPath = path.join(documentsPath, 'WeChat Files');
+      wechatSource = 'Default';
+    }
+
+    console.log(`微信数据路径 (${wechatSource}): ${wechatPath}`);
+
+    // 只要路径存在，或者它是通过注册表明确指向的（即使可能是个坏路径，也尝试添加）
+    if (wechatPath && fs.existsSync(wechatPath)) {
+      // 检查是否已经是异地存储（通过设置修改）
+      let alreadyMigratedBySetting = false;
+      if (!wechatPath.toLowerCase().startsWith('c:')) {
+        alreadyMigratedBySetting = true;
+      }
+
+      specialApps.push({
+        name: '微信数据 (聊天记录)',
+        publisher: 'Tencent',
+        version: 'Data',
+        installDate: new Date().toISOString().slice(0, 10).replace(/-/g, ''),
+        size: null,
+        uninstallString: '',
+        installLocation: wechatPath,
+        isSpecialData: true,
+        iconHint: 'wechat',
+        // 如果物理路径已经不在C盘，直接注入迁移状态
+        ...(alreadyMigratedBySetting ? { isMigrated: true, migratedTo: wechatPath } : {})
+      });
+    }
+
+    // 2. QQ数据目录
+    const qqPath = path.join(documentsPath, 'Tencent Files');
+    if (fs.existsSync(qqPath)) {
+      specialApps.push({
+        name: 'QQ数据 (聊天记录)',
+        publisher: 'Tencent',
+        version: 'Data',
+        installDate: new Date().toISOString().slice(0, 10).replace(/-/g, ''),
+        size: null,
+        uninstallString: '',
+        installLocation: qqPath,
+        isSpecialData: true,
+        iconHint: 'qq'
+      });
+    }
+
+  } catch (e) {
+    console.warn('detectSpecialDataApps error:', e);
+  }
+  return specialApps;
+}
 
 // 直接使用PowerShell获取已安装应用，无需JSON解析
 async function getInstalledAppsDirectMethod() {
@@ -2058,6 +2219,30 @@ async function migrateFolder(sourcePath, targetDrive) {
     } catch (killErr) {
       console.warn('自动终止进程尝试失败:', killErr.message);
     }
+
+    // 增强型查杀：针对热门软件的强制查杀 (Hardcoded Kill List)
+    // 很多时候 Get-Process 找不到所有相关联的子进程，直接杀主进程更有效
+    const targetNameLower = path.basename(normalizedSource).toLowerCase();
+    const sourceLower = normalizedSource.toLowerCase();
+    let killList = [];
+
+    if (sourceLower.includes('wechat') || targetNameLower.includes('wechat')) {
+      killList.push('WeChat.exe', 'WeChatAppEx.exe', 'WeChatPlayer.exe');
+    }
+    if (sourceLower.includes('tencent files') || sourceLower.includes('qq') || targetNameLower === 'qq') {
+      killList.push('QQ.exe', 'QQProtect.exe');
+    }
+
+    if (killList.length > 0) {
+      console.log(`执行强制查杀列表: ${killList.join(', ')}`);
+      try {
+        // /F: 强制 /IM: 映像名称 /T: 终止子进程
+        const killCmd = `taskkill /F /IM "${killList.join('" /IM "')}" /T`;
+        execSync(killCmd, { stdio: 'ignore' });
+      } catch (e) {
+        // 忽略错误，因为进程可能根本没运行
+      }
+    }
     // --------------------
 
     // 6. 阶段一：复制文件
@@ -2104,10 +2289,10 @@ async function migrateFolder(sourcePath, targetDrive) {
           // 我们不能建立链接，因为源文件夹还在。
           // 告诉用户重启后续传
           throw new Error(
-            `\n⚠️ 迁移大部分完成，但因文件被占用，无法删除源文件夹。\n\n` +
-            `我们已为您【保留了迁移进度】。\n` +
-            `请重启电脑（确保软件彻底关闭），然后再次点击【一键搬家】，\n` +
-            `程序将自动完成剩余步骤（无需重新复制）。`
+            `\n⚠️ 数据已安全复制到目标盘，但因文件被占用（如微信/QQ后台），无法清理C盘源文件。\n\n` +
+            `请不要担心！我们已为您【保留了进度】。\n` +
+            `请【重启电脑】以释放占用，然后再次点击【一键搬家】，\n` +
+            `程序将自动完成剩余步骤（无需重新复制，瞬间完成）。`
           );
         }
       }
